@@ -98,6 +98,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'django.contrib.staticfiles.middleware.StaticFilesMiddleware',
+        
+    }
 ]
 
 
@@ -119,7 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Location for collectstatic to gather static files for deployment
-STATIC_ROOT = '../main/static'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
