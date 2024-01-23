@@ -216,7 +216,7 @@
   $(document).ready(function () {
       // Populate Academic Year Dropdown
       $.ajax({
-          url: "http://127.0.0.1:8000/academicyears/getacadyr",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -302,7 +302,7 @@ pdf.autoTable({
       });
       // Populate Semester Dropdown
       $.ajax({
-          url: "http://127.0.0.1:8000/semesters/getsemester",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -323,7 +323,7 @@ pdf.autoTable({
 
       // Populate Program Dropdown
       $.ajax({
-          url: "http://127.0.0.1:8000/courses/getcourse",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -344,7 +344,7 @@ pdf.autoTable({
 
       // Populate Class Dropdown
       $.ajax({
-          url: "http://127.0.0.1:8000/classes/getclass",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/classes/getclass",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -373,7 +373,7 @@ pdf.autoTable({
 
           // Make a request to get filtered schedule data
           $.ajax({
-              url: "http://127.0.0.1:8000/manageschedules/filtersched",
+              url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/filtersched",
               type: 'GET',
               data: {
                   acadyear_id: academicYearId,
@@ -409,7 +409,7 @@ function populateScheduleTable(data) {
           // Make a separate request to get room details based on room_id
           $.ajax({
               type: "GET",
-              url: `http://127.0.0.1:8000/rooms/${schedule.room_id}`, // Adjust the endpoint accordingly
+              url: `https://schedulerserver-6e565d991c10.herokuapp.com/rooms/${schedule.room_id}`, // Adjust the endpoint accordingly
               headers: {
                 'Authorization': `Bearer ${getToken()}`
             },

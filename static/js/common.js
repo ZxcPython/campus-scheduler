@@ -1,1 +1,1 @@
-var baseUrl = "http://127.0.0.1:8000"
+var baseUrl = "https://schedulerserver-6e565d991c10.herokuapp.com"
