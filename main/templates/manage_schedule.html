@@ -247,8 +247,6 @@
 <script src="./dist/js/demo.min.js?1692870487" defer></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/common.js' %}" defer></script>
 <script>
   // Function to retrieve token from localStorage
   function getToken() {
@@ -275,7 +273,7 @@
   // Function to populate Academic Year Dropdown
   function populateAcademicYearDropdown() {
       $.ajax({
-          url: baseUrl+"/academicyears/getacadyr",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -297,7 +295,7 @@
   // Function to populate Curriculum Year Dropdown
   function populateCurriculumYearDropdown() {
     $.ajax({
-        url: baseUrl+"/managecurriculums/getcurnames",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/managecurriculums/getcurnames",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -319,64 +317,77 @@
 // Function to fetch faculties and populate dropdown
 function fetchFaculties() {
   $.ajax({
-    url: baseUrl+"/faculties/getfaculties",
+    url: "https://pupqcfis-com.onrender.com/api/all/FISFaculty",
     type: "GET",
-    headers: {
-      'Authorization': `Bearer ${getToken()}`
-    },
     success: function(response) {
       // Populate the dropdown with faculty names and IDs
-      if (response.data && response.data.length > 0) {
-        response.data.forEach(function (faculty) {
-          $('#facultyDropdown').append(`<option value="${faculty.id}" data-id="${faculty.id}">${faculty.name}</option>`);
+      const facultyDropdown = $("#facultyDropdown");
+      facultyDropdown.empty(); // Clear existing options
+
+      if (response && response.Faculties && Object.keys(response.Faculties).length > 0) {
+        // Iterate over faculties and add them to the dropdown
+        Object.values(response.Faculties).forEach(function (faculty) {
+          const fullName = `${faculty.FirstName} ${faculty.LastName}`;
+          facultyDropdown.append(`<option value="${faculty.FacultyId}" data-id="${faculty.FacultyId}">${fullName}</option>`);
         });
 
         // Initialize Select2 for the faculty dropdown
-        $('#facultyDropdown').select2({
+        facultyDropdown.select2({
           width: '100%',
           placeholder: 'Select Faculty',
           allowClear: true
         });
       } else {
-        console.log('No courses found.');
+        console.log('No data to display.');
       }
     },
     error: function (xhr, status, error) {
-      console.log('Error fetching courses:', xhr.responseText);
+      console.log('Error fetching faculties:', xhr.responseText);
     }
   });
 }
+
 // Function to fetch faculty details based on selected option
+$("#searchFacultyButton").on("click", function() {
+  searchFaculty();
+});
+
 function searchFaculty() {
   const facultyId = $("#facultyDropdown").val();
 
   $.ajax({
-    url: baseUrl+`/faculties/${facultyId}`,
+    url: `https://pupqcfis-com.onrender.com/api/FISFaculty/${facultyId}`,
     type: "GET",
-    headers: {
-      'Authorization': `Bearer ${getToken()}`
-    },
-    success: function(response) {
+    success: function (response) {
       // Update the UI with faculty details
-      $("#facultyName").text(response.data.name);
-      $("#statusValue").text(response.data.status);
-      $("#unitsAllowedValue").text(response.data.allowed_units);
-      $("#prefSchedule").text(response.data.preferred_schedule);
-      // Add more lines to update other details as needed
+      const facultyDetails = response.Faculties;
+
+      if (facultyDetails) {
+        const fullName = `${facultyDetails.FirstName} ${facultyDetails.LastName}`;
+        const facultyType = facultyDetails.FacultyType;
+        const units = facultyDetails.Units;
+        const preferredSchedule = facultyDetails.PreferredSchedule;
+
+        // Update UI elements
+        $("#facultyName").text(fullName);
+        $("#statusValue").text(facultyType);
+        $("#unitsAllowedValue").text(units);
+        $("#prefSchedule").text(preferredSchedule);
+
+        // Add more lines to update other details as needed
+      } else {
+        console.log('Faculty details not found.');
+      }
     },
-    error: function(xhr, status, error) {
+    error: function (xhr, status, error) {
       console.error("Error fetching faculty details:", xhr.responseText);
     }
   });
 }
-// Assign the searchFaculty function to the button click event
-$("#searchFacultyButton").on("click", function() {
-  searchFaculty();
-});
 // Function to populate Program Dropdown
 function populateProgramDropdown() {
     $.ajax({
-        url: baseUrl+"/courses/getcourse",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -399,7 +410,7 @@ function populateProgramDropdown() {
 // Function to populate Year Level Dropdown
 function populateYearLevelDropdown() {
     $.ajax({
-        url: baseUrl+"/yearlevels/getyearlevels",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/yearlevels/getyearlevels",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -422,7 +433,7 @@ function populateYearLevelDropdown() {
 // Function to populate Semester Dropdown
 function populateSemesterDropdown() {
     $.ajax({
-        url: baseUrl+"/semesters/getsemester",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -473,7 +484,7 @@ $(document).on('click', '#validator-btn', function () {
 
   // Make a request to the validation endpoint
   $.ajax({
-    url: baseUrl+"/manageschedules/validate-schedule",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/validate-schedule",
     type: 'POST',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -543,7 +554,7 @@ function getTableData() {
 // Function to send bulk insert data
 function sendBulkInsertData(data) {
   $.ajax({
-      url: baseUrl+"/manageschedules/bulk-post",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/bulk-post",
       type: 'POST',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -584,7 +595,7 @@ $('#submit-btn').on('click', function () {
 // Function to populate Class Dropdown
 function populateClassDropdown() {
   $.ajax({
-      url: baseUrl+"/classes/getclass",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/classes/getclass",
       type: 'GET',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -613,7 +624,7 @@ function populateClassDropdown() {
 
 function populateRoomDropdownOutsideTable() {
   $.ajax({
-    url: baseUrl+"/rooms/getrooms",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
     type: 'GET',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -653,7 +664,7 @@ $('#searchRoomButton').on('click', function () {
 
   // Make a request to get room schedule data
   $.ajax({
-      url: baseUrl+"/manageschedules/findroomscheds",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/findroomscheds",
       type: 'GET',
       data: {
           acadyear_id: selectedAcadyearId,
@@ -688,7 +699,7 @@ $('#searchRoomButton').on('click', function () {
                   // Make a separate request to get class details based on class_id
                   $.ajax({
                       type: "GET",
-                      url: baseUrl+`/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
+                      url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
                       headers: {
                           'Authorization': `Bearer ${getToken()}`
                       },
@@ -750,7 +761,7 @@ $('#filter-btn').on('click', function () {
 
   // Make a request to get filtered curriculum data
   $.ajax({
-    url: baseUrl+"/curriculums/filtercuri",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/curriculums/filtercuri",
     type: 'GET',
     data: {
       curriculum_year_name: curriculumYearId,
@@ -788,7 +799,7 @@ function populateCurriculumTable(data) {
 
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: baseUrl+"/rooms/getrooms",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
@@ -887,7 +898,7 @@ function populateCurriculumTable(data) {
     } else {
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: baseUrl+"/rooms/getrooms",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
