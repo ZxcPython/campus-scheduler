@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <link href="{% static 'css/tabler.min.css' %}" rel="stylesheet"/>
@@ -5,6 +6,9 @@
 <link href="{% static 'css/tabler-payments.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
+<link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+
 
 <body>
 {% include "navbar.html" %}
@@ -15,15 +19,338 @@
       <div class="container-xl">
         <div class="row g-2 align-items-center">
           <div class="col">
-            <!-- Page pre-title -->
-            <div class="page-pretitle">
-              Overview 
+            <div class="mb-1">
+              <ol class="breadcrumb" aria-label="breadcrumbs">
+              <li class="breadcrumb-item"><a href="{% url 'view_schedule' %}">View Schedule</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'view_faculty' %}">Faculty schedule</a></li>
+              </ol>
             </div>
             <h2 class="page-title" style="margin-bottom: 20px;">
-             Faculty Schedule
+              Faculty Schedule
             </h2>
           </div>
           <!-- Page title actions -->
+
   </div>
+</div>
+<div class="page-body">
+<div class="container-xl">
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Search Class Schedule</h3>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-center">
+
+        <div class="col-12 col-md-3">
+          <div class="mb-3">
+            <label class="form-label">Academic Year</label>
+            <select type="text" class="form-select" id="academicyearDropdown" value="">
+              <option value="" selected disabled>Select Academic Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3">
+          <div class="mb-3">
+            <label class="form-label">Semester</label>
+            <select type="text" class="form-select" id="semesterDropdown" value="">
+              <option value="" selected disabled>Select Semester</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3">
+          <div class="mb-3">
+            <label class="form-label">Faculty name</label>
+            <select type="text" class="form-select" id="FacultyDropdown" value="">
+              <option value="" selected disabled>Select Faculty</option>
+            </select>
+          </div>
+        </div>
+  
+
+        
+      <div class="col-12 mt-3 text-end mb-2">
+        <a id="searchButton" class="btn btn-primary" target="_blank" rel="noopener">Search</a>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    <div class="container-xl mt-4">
+      <div class="row g-2 align-items-center">
+        <div class="col-auto ms-auto d-print-none">
+          <button class="btn btn-primary" type="button" id="generate-pdf"><!-- Add this button -->
+            <!-- Download SVG icon from http://tabler-icons.io/i/printer -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /><path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" /></svg>
+            Print Schedule
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Page body -->
+  <div class="page-body">
+    <div class="container-xl">
+      <div class="card card-lg">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <class_details>
+                <strong> Faculty type: </strong><span id="facultytypeDetails"></span><br>
+              <class_details>
+            </div>
+            <div class="col-6 text-end">
+              <class_details>
+                <strong> Academic Year: </strong><span id="academicYearDetails"></span><br>
+                <strong> Semester: </strong><span id="semesterDetails"></span><br>
+              <class_details>
+            </div>
+            <div class="col-12">
+              <hr class="my-1 mt-4"> 
+              <h1 class="mb-0 text-center"><span id="Facultynamedetails"></span></h1>
+              <hr class="my-1">
+          </div>
+          </div>
+          <table class="table table-transparent table-responsive mt-5">
+            <thead>
+              <tr>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th class="text-center" style="width: 1%">Lec</th>
+                  <th class="text-center" style="width: 1%">Lab</th>
+                  <th class="text-center" style="width: 1%">Unit</th>
+                  <th class="text-center">Class</th>
+                  <th class="text-center">Schedule</th>
+                  <th class="text-center">Room</th>
+              </tr>
+          </thead>
+            <tbody id="facultyLoadingTableBody">
+              <tr>
+              </tr>
+            </tbody>
+          </table>
+          <p class="text-secondary text-center mt-5">You can download the file at the upper right corner of the page!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer footer-transparent d-print-none">
+    <div class="container-xl">
+      <div class="row text-center align-items-center flex-row-reverse">
+        <div class="col-lg-auto ms-lg-auto">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item"><a href="https://tabler.io/docs" target="_blank" class="link-secondary" rel="noopener">Documentation</a></li>
+            <li class="list-inline-item"><a href="./license.html" class="link-secondary">License</a></li>
+            <li class="list-inline-item"><a href="https://github.com/tabler/tabler" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
+            <li class="list-inline-item">
+              <a href="https://github.com/sponsors/codecalm" target="_blank" class="link-secondary" rel="noopener">
+                <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-pink icon-filled icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+                Sponsor
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item">
+              Copyright &copy; 2023
+              <a href="." class="link-secondary">Tabler</a>.
+              All rights reserved.
+            </li>
+            <li class="list-inline-item">
+              <a href="./changelog.html" class="link-secondary" rel="noopener">
+                v1.0.0-beta20
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+</div>
+<!-- Libs JS -->
+<!-- Tabler Core -->
+<script src="./dist/js/tabler.min.js?1692870487" defer></script>
+<script src="./dist/js/demo.min.js?1692870487" defer></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.10/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+  // Function to retrieve token from localStorage
+  function getToken() {
+      return localStorage.getItem('accessToken');
+  }
+
+  // Function to check if the token is available
+  function isTokenAvailable() {
+      const token = getToken();
+      return token !== null && token !== undefined && token !== '';
+  }
+
+  // Function to redirect to login if token is not available
+  function redirectToLogin() {
+      console.log('Token not found. Redirecting to login.');
+      window.location.href = "/index";
+  }
+
+  // Check if token is available and redirect if not
+  if (!isTokenAvailable()) {
+      redirectToLogin();
+  }
+  $(document).ready(function () {
+      // Populate Academic Year Dropdown
+$.ajax({
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
+  type: 'GET',
+  headers: {
+      'Authorization': `Bearer ${getToken()}`
+  },
+  success: function (response) {
+      if (response.data && response.data.length > 0) {
+          response.data.forEach(function (academicYear) {
+              $('#academicyearDropdown').append(`<option value="${academicYear.name}" data-id="${academicYear.id}">${academicYear.name}</option>`);
+          });
+      } else {
+          console.log('No academic years found.');
+      }
+  },
+  error: function (xhr, status, error) {
+      console.log('Error fetching academic years:', xhr.responseText);
+  }
+});
+
+// Populate Semester Dropdown
+$.ajax({
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
+  type: 'GET',
+  headers: {
+      'Authorization': `Bearer ${getToken()}`
+  },
+  success: function (response) {
+      if (response.data && response.data.length > 0) {
+          response.data.forEach(function (semester) {
+              $('#semesterDropdown').append(`<option value="${semester.name}" data-id="${semester.id}">${semester.name}</option>`);
+          });
+      } else {
+          console.log('No semesters found.');
+      }
+  },
+  error: function (xhr, status, error) {
+      console.log('Error fetching semesters:', xhr.responseText);
+  }
+});
+
+      // Fetch faculties and populate the Faculty Dropdown
+      function fetchFaculties() {
+        $.ajax({
+            url: "https://pupqcfis-com.onrender.com/api/all/FISFaculty",
+            type: "GET",
+            success: function (response) {
+                // Populate the dropdown with faculty names
+                const facultyDropdown = $("#FacultyDropdown"); 
+                facultyDropdown.empty(); 
+    
+                if (response && response.Faculties && Object.keys(response.Faculties).length > 0) {
+                    // Iterate over faculties and add them to the dropdown
+                    Object.values(response.Faculties).forEach(function (faculty) {
+                        const fullName = `${faculty.FirstName} ${faculty.LastName}`;
+                        facultyDropdown.append(`<option value="${faculty.FacultyId}">${fullName}</option>`);
+                    });
+    
+                    // Initialize Select2 on the dropdown
+                    facultyDropdown.select2({
+                        width: '100%',
+                        placeholder: 'Search for a faculty',
+                        allowClear: true 
+                    });
+                } else {
+                    console.log('No data to display.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching faculties:", xhr.responseText);
+            }
+        });
+      }
+      fetchFaculties();
+
+      $('#searchButton').on('click', function () {
+        // Get selected values and names from dropdowns
+        const academicYearId = $('#academicyearDropdown option:selected').data('id');
+        const academicYearName = $('#academicyearDropdown option:selected').text();
+        const semesterId = $('#semesterDropdown option:selected').data('id');
+        const semesterName = $('#semesterDropdown option:selected').text();
+        const facultyName = $('#FacultyDropdown option:selected').text();
+    
+        // Make a request to get filtered faculty loading data
+        $.ajax({
+            url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/filterfindfaculty",
+            type: 'GET',
+            data: {
+                acadyear_id: academicYearId,
+                semester_id: semesterId,
+                facultyname: facultyName
+            },
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
+            success: function (response) {
+                // Populate the table with the filtered data
+                populateFacultyLoadingTable(response);
+    
+                // Update the details based on the selected values
+                $('#academicYearDetails').text(academicYearName || 'Academic Year');
+                $('#semesterDetails').text(semesterName || 'Semester');
+    
+                // Display facultyname in the h1 element
+                $('#Facultynamedetails').text(facultyName || 'Faculty Name');
+    
+                // Check if 'facultystatus' is available in the response
+                const facultystatus = response.length > 0 ? response[0].facultystatus : null;
+                $('#facultytypeDetails').text(facultystatus || 'Faculty Type');
+            },
+            error: function (xhr, status, error) {
+                console.log('Error fetching filtered faculty loading data:', xhr.responseText);
+            }
+        });
+    });
+
+      // Function to populate the faculty loading table
+function populateFacultyLoadingTable(data) {
+  const facultyLoadingTableBody = $('#facultyLoadingTableBody'); // Correct ID here
+  facultyLoadingTableBody.empty(); 
+
+  if (data && data.length > 0) {
+      data.forEach(function (facultyLoading) {
+          facultyLoadingTableBody.append(`
+              <tr>
+                  <td>${facultyLoading.course_code}</td>
+                  <td>${facultyLoading.course_description}</td>
+                  <td>${facultyLoading.lec}</td>
+                  <td>${facultyLoading.lab}</td>
+                  <td>${facultyLoading.units}</td>
+                  <td>${facultyLoading.classname}</td>
+                  <td>${facultyLoading.schedule}</td>
+                  <td>${facultyLoading.roomname}</td>
+              </tr>
+          `);
+      });
+  } else {
+      console.log('No faculty loading data found.');
+  }
+}
+
+      // ... (your existing code for generate-pdf, fetchFaculties, populateScheduleTable, formatTime, etc.)
+  });
+</script>
 </body>
 </html>
