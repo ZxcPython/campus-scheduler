@@ -11,8 +11,12 @@ def adminviewschedule(request):
     return render(request, 'adminviewschedule.html')
 def adminnavbar(request):
     return render(request, 'adminnavbar.html')
+def adminfacultyview(request):
+    return render(request, 'adminfacultyview.html')
 def adminmanageschedule(request):
     return render(request, 'adminmanageschedule.html')
+def adminviewroom(request):
+    return render(request, 'adminviewroom.html')
 def admincurriculumview(request):
     return render(request, 'admincurriculumview.html')
 def adminfacultyloading(request):

@@ -54,7 +54,7 @@
                       <div class="card-body">
                         <!-- Placeholder spans for dynamic data -->
                         <div class="h2 mt-">
-                          <span id="facultyName">Lenandro Avena</span>
+                          <span id="facultyName">Faculty Member</span>
                         </div>
                         <div class="mb-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -65,7 +65,7 @@
                             <path d="M3 13a20 20 0 0 0 18 0" />
                           </svg>
                           <strong>Faculty Type:</strong>
-                          <span id="facultyType">Full-Time</span>
+                          <span id="facultyType">Not Set</span>
                         </div>
                         <div class="mb-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +76,7 @@
                             <path d="M3 13a20 20 0 0 0 18 0" />
                           </svg>
                           <strong>Rank:</strong>
-                          <span id="rank">Associate Professor II</span>
+                          <span id="rank">Not Set</span>
                         </div>
                         <div class="mb-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -87,7 +87,7 @@
                             <path d="M3 13a20 20 0 0 0 18 0" />
                           </svg>
                           <strong>Remarks:</strong>
-                          <span id="remarks">None</span>
+                          <span id="remarks">Not Set</span>
                         </div>
                         <div class="mb-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -98,7 +98,29 @@
                             <path d="M3 13a20 20 0 0 0 18 0" />
                           </svg>
                           <strong>Units Allowed:</strong>
-                          <span id="unitsAllowed">12</span>
+                          <span id="unitsAllowed">Not Set</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>Preferred Schedule:</strong>
+                          <span id="preferredSchedule">Not Set</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>Specialization:</strong>
+                          <span id="Specialization">Not Set</span>
                         </div>
 
                         <div class="card-body">
@@ -114,7 +136,9 @@
                                       <th>Units</th>
                                       <th>Lecture</th>
                                       <th>Lab</th>
-                                      <th>Is Lab?</th>
+                                      <th>Class</th>
+                                      <th>Schedule</th>
+                                      <th>Room</th>
                                       <th class="w-1">Action</th>
                                     </tr>
                                   </thead>
@@ -122,6 +146,9 @@
                                     <!-- Course load data will be dynamically added here -->
                                   </tbody>
                                 </table>
+                                <div class="col-12 mt-3 text-end">
+                                  <button class="btn btn-primary" id="submit-btn">Submit</button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -222,7 +249,7 @@
         // Function to populate academic year dropdown
         function populateAcademicYearDropdown() {
             $.ajax({
-                url: baseUrl+"/academicyears/getacadyr",
+                url:"https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -245,7 +272,7 @@
         // Function to populate semester dropdown
         function populateSemesterDropdown() {
             $.ajax({
-                url: baseUrl+"/semesters/getsemester",
+                url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -270,6 +297,174 @@
 
         // Fetch semesters and populate the dropdown
         populateSemesterDropdown();
+        // Function to fetch and display schedule search results
+// Function to search schedules based on academic year, semester, and subject code
+function searchSchedule() {
+  const acadYearId = $("#acadyearDropdown option:selected").data("id");
+  const semesterId = $("#semesterDropdown option:selected").data("id");
+  const subjectCode = $("#subjectCodeInput").val();
+
+  // Clear existing cards
+  $("#cardContainer").empty();
+
+  // Declare classDetails and roomDetails variables outside the AJAX call
+  let classDetailsArray = [];
+  let roomDetailsArray = [];
+  let formattedTimeArray = [];
+
+  // Make an AJAX request to the FastAPI endpoint
+  $.ajax({
+    url: `https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/filtersched-by-subject-code`,
+    type: "GET",
+    data: {
+      acadyear_id: acadYearId,
+      semester_id: semesterId,
+      subject_code: subjectCode
+    },
+    success: function (response) {
+      // Check if there are results
+      if (response && response.length > 0) {
+        // Iterate over the schedule results and create cards
+        response.forEach(function (schedule) {
+          // Make separate requests to get class and room details based on IDs
+          const classRequest = $.ajax({
+            type: "GET",
+            url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`,
+            headers: {
+              'Authorization': `Bearer ${getToken()}`
+            },
+          });
+
+          const roomRequest = $.ajax({
+            type: "GET",
+            url: `https://schedulerserver-6e565d991c10.herokuapp.com/rooms/${schedule.room_id}`,
+            headers: {
+              'Authorization': `Bearer ${getToken()}`
+            },
+          });
+
+          // Store the promises in arrays
+          classDetailsArray.push(classRequest);
+          roomDetailsArray.push(roomRequest);
+
+          // Format start and end times
+          const formattedStartTime = formatTime(schedule.start_time);
+          const formattedEndTime = formatTime(schedule.end_time);
+          formattedTimeArray.push({ startTime: formattedStartTime, endTime: formattedEndTime });
+        });
+
+        // Wait for all AJAX requests to complete
+        $.when.apply($, classDetailsArray.concat(roomDetailsArray)).done(function () {
+          // arguments contains the resolved data from each AJAX request
+          const classDetails = Array.from(arguments).slice(0, response.length).map(data => data[0].data || {});
+          const roomDetails = Array.from(arguments).slice(response.length).map(data => data[0].data || {});
+
+          // Now you can use classDetails and roomDetails to update your UI
+          response.forEach(function (schedule, index) {
+            const classDetail = classDetails[index];
+            const roomDetail = roomDetails[index];
+            const formattedTime = formattedTimeArray[index];
+
+            const cardHtml = `
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">${schedule.subject_code}</h5>
+                    <p class="card-text">
+                      <strong>Description:</strong> ${schedule.subject_name}<br>
+                      <strong>Lecture Hours:</strong> ${schedule.lecture_hours || 'N/A'}<br>
+                      <strong>Lab Hours:</strong> ${schedule.lab_hours || 'N/A'}<br>
+                      <strong>Units:</strong> ${schedule.units}<br>
+                      <strong>Class:</strong> ${classDetail.classname || 'N/A'}<br>
+                      <strong>Day:</strong> ${schedule.day}<br>
+                      <strong>Schedule:</strong> ${formattedTime.startTime} - ${formattedTime.endTime}<br>
+                      <strong>Room:</strong> ${roomDetail.room_number || 'N/A'}
+                    </p>
+                    <button class="btn btn-primary assignButton" data-schedule-index="${index}">Assign</button>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Append the card to the container
+            $("#cardContainer").append(cardHtml);
+          });
+
+          // Add a delegated event listener for the Assign button using a closure
+          $("#cardContainer").off().on("click", ".assignButton", function () {
+            // Find the corresponding schedule for the clicked button
+            const clickedButton = $(this);
+            const clickedScheduleIndex = clickedButton.data("schedule-index");
+            const clickedSchedule = response[clickedScheduleIndex];
+
+            // Use the captured schedule data for assignment
+            const assignedSchedule = {
+              subject_code: clickedSchedule.subject_code,
+              subject_name: clickedSchedule.subject_name,
+              units: clickedSchedule.units,
+              lecture_hours: clickedSchedule.lecture_hours || 'N/A',
+              lab_hours: clickedSchedule.lab_hours || 'N/A',
+              class_name: classDetails[clickedScheduleIndex].classname || 'N/A',
+              day: clickedSchedule.day,
+              schedule: `${formattedTimeArray[clickedScheduleIndex].startTime} - ${formattedTimeArray[clickedScheduleIndex].endTime}`,
+              room: roomDetails[clickedScheduleIndex].room_number || 'N/A'
+            };
+
+            // Append the assigned schedule to the Course Load table
+            addToCourseLoadTable(assignedSchedule);
+
+            // Optionally, remove the assigned schedule card from the UI
+            clickedButton.closest('.card').remove();
+          });
+        });
+      } else {
+        // Display a message if no results are found
+        $("#cardContainer").html('<p>No schedules found for the given filters.</p>');
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching schedule details:", xhr.responseText);
+    }
+  });
+}
+
+// Function to append assigned schedule to the Course Load table
+function addToCourseLoadTable(assignedSchedule) {
+  // Format the schedule data and append it to the Course Load table
+  const rowHtml = `
+    <tr>
+      <td>${assignedSchedule.subject_code}</td>
+      <td>${assignedSchedule.subject_name}</td>
+      <td>${assignedSchedule.units}</td>
+      <td>${assignedSchedule.lecture_hours}</td>
+      <td>${assignedSchedule.lab_hours}</td>
+      <td>${assignedSchedule.class_name}</td>
+      <td>${assignedSchedule.day} ${assignedSchedule.schedule}</td>
+      <td>${assignedSchedule.room}</td>
+      <td><button class="btn btn-danger btn-sm removeButton">Remove</button></td>
+    </tr>
+  `;
+
+  // Append the row to the Course Load table
+  $("#courseLoadBody").append(rowHtml);
+
+  // Add a click event listener for the Remove button
+  $(".removeButton").on("click", function () {
+    // Remove the assigned schedule from the Course Load table
+    $(this).closest('tr').remove();
+  });
+}
+
+// Assign the searchSchedule function to the button click event
+$("#scheduleSearchButton").on("click", function () {
+  searchSchedule();
+});
+
+// Function to format time (e.g., convert 07:00:00 to 7:00 AM)
+function formatTime(time) {
+  const formattedTime = new Date(`1970-01-01T${time}`);
+  return formattedTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
 
         function searchFaculty() {
             const facultyId = $("#facultyDropdown").val();
@@ -284,6 +479,8 @@
                     $("#rank").text(response.Faculties.Rank);
                     $("#remarks").text(response.Faculties.Remarks);
                     $("#unitsAllowed").text(response.Faculties.Units);
+                    $("#preferredSchedule").text(response.Faculties.PreferredSchedule);
+                    $("#Specialization").text(response.Faculties.Specialization);
                     // Add more lines to update other details as needed
                 },
                 error: function (xhr, status, error) {
@@ -291,6 +488,66 @@
                 }
             });
         }
+        // Function to submit course load data
+function submitCourseLoad() {
+  // 1. Capture the selected academic year and semester from the dropdowns
+  const acadYearId = $("#acadyearDropdown").val();
+  const semesterId = $("#semesterDropdown").val();
+
+  // 2. Capture the faculty details (name, type, rank)
+  const facultyName = $("#facultyName").text();
+  const facultyType = $("#facultyType").text();
+  const rank = $("#rank").text();
+
+  // 3. Capture the course load data from the table rows
+  const courseLoadData = [];
+  $("#courseLoadBody tr").each(function () {
+      const rowData = {
+          acadyear_id: acadYearId,
+          semester_id: semesterId,
+          facultyname: facultyName,
+          facultystatus: facultyType,
+          rank: rank,
+          course_code: $(this).find("td:eq(0)").text(),
+          course_description: $(this).find("td:eq(1)").text(),
+          units: $(this).find("td:eq(2)").text(),
+          lec: $(this).find("td:eq(3)").text(),
+          lab: $(this).find("td:eq(4)").text(),
+          classname: $(this).find("td:eq(5)").text(),
+          schedule: $(this).find("td:eq(6)").text(),
+          roomname: $(this).find("td:eq(7)").text(),
+      };
+      courseLoadData.push(rowData);
+  });
+
+  // 4. Make an AJAX request to submit the course load data
+  $.ajax({
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/post",  // Replace with your actual backend URL
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ facultyloadings: courseLoadData }),
+      headers: {
+          'Authorization': `Bearer ${getToken()}`
+      },
+      success: function (response) {
+          // Handle the success response
+          console.log("Course load submitted successfully:", response);
+          // You may want to redirect or show a success message
+          window.alert("Schedules assigned successfully!");
+      },
+      error: function (xhr, status, error) {
+          // Handle the error response
+          console.error("Error submitting course load:", xhr.responseText);
+          // You may want to display an error message
+          window.alert("Error occurred, please assign a schedule or try again");
+      }
+  });
+}
+
+// Assign the submitCourseLoad function to the button click event
+$("#submit-btn").on("click", function () {
+  submitCourseLoad();
+});
 
         // Assign the searchFaculty function to the button click event
         $("#searchButton").on("click", function () {
@@ -301,5 +558,5 @@
 
 
 
-</body>
-</html>
+  </body>
+  </html>
