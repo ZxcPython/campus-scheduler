@@ -101,6 +101,28 @@
                           <strong>Units Allowed:</strong>
                           <span id="unitsAllowed">Not Set</span>
                         </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>Preferred Schedule:</strong>
+                          <span id="preferredSchedule">Not Set</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>Specialization:</strong>
+                          <span id="Specialization">Not Set</span>
+                        </div>
 
                         <div class="card-body">
                           <h3 class="card-title">Course Load</h3>
@@ -458,6 +480,8 @@ function formatTime(time) {
                     $("#rank").text(response.Faculties.Rank);
                     $("#remarks").text(response.Faculties.Remarks);
                     $("#unitsAllowed").text(response.Faculties.Units);
+                    $("#preferredSchedule").text(response.Faculties.PreferredSchedule);
+                    $("#Specialization").text(response.Faculties.Specialization);
                     // Add more lines to update other details as needed
                 },
                 error: function (xhr, status, error) {
@@ -510,11 +534,13 @@ function submitCourseLoad() {
           // Handle the success response
           console.log("Course load submitted successfully:", response);
           // You may want to redirect or show a success message
+          window.alert("Schedules assigned successfully!");
       },
       error: function (xhr, status, error) {
           // Handle the error response
           console.error("Error submitting course load:", xhr.responseText);
           // You may want to display an error message
+          window.alert("Error occurred, please assign a schedule or try again");
       }
   });
 }
