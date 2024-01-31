@@ -269,7 +269,7 @@
   if (!isTokenAvailable()) {
       redirectToLogin();
   }
-  
+  //added new ajax jquery
   // Function to populate Academic Year Dropdown
   function populateAcademicYearDropdown() {
       $.ajax({
@@ -857,6 +857,7 @@ function populateCurriculumTable(data) {
               <td>${labHoursRow.units}</td>
               <td>${labHoursRow.tuition_hours}</td>
               <td>
+                <span class="label">For lab</span>
                 <select class="form-select" style="font-size: small; width: 150px;">
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -884,6 +885,45 @@ function populateCurriculumTable(data) {
               </td>
             </tr>
           `);
+           // Add a new row for lab hours
+           tableBody.append(`
+           <tr>
+             <td>${labHoursRow.subject_code}</td>
+             <td>${labHoursRow.subject_name}</td>
+             <td>${labHoursRow.lecture_hours}</td>
+             <td>${labHoursRow.lab_hours}</td>
+             <td>${labHoursRow.units}</td>
+             <td>${labHoursRow.tuition_hours}</td>
+             <td>
+               <span class="label">For additional Schedule</span>
+               <select class="form-select" style="font-size: small; width: 150px;">
+                 <option value="Monday">Monday</option>
+                 <option value="Tuesday">Tuesday</option>
+                 <option value="Wednesday">Wednesday</option>
+                 <option value="Thursday">Thursday</option>
+                 <option value="Friday">Friday</option>
+                 <option value="Saturday">Saturday</option>
+                 <option value="Sunday">Sunday</option>
+               </select>
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                 <option value=""></option>
+                 ${generateRoomOptions(roomResponse.data)}
+               </select>
+             </td>
+             <td>
+               <button class="btn btn-secondary" id="validator-btn">Validate</button>
+               <button class="btn btn-danger" onclick="deleteRow(this)">Delete</button>
+             </td>
+           </tr>
+         `);
 
           // Initialize Select2 for the room dropdowns
           $('.select2-room').select2({
@@ -957,6 +997,11 @@ function populateCurriculumTable(data) {
       });
     }
   });
+}
+// Function to delete a row
+function deleteRow(button) {
+  const currentRow = $(button).closest('tr');
+  currentRow.remove();
 }
 
 // Function to generate room dropdown options
