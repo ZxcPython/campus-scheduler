@@ -6,6 +6,10 @@
 <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
 <body>
@@ -110,7 +114,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Room</th>
-                            <th>Validator</th>
+                            <th>Validator/Action</th>
                           </tr>
                         </thead>
                         <tbody id="scheduleTableBody">
@@ -245,7 +249,7 @@
 <!-- Tabler Core -->
 <script src="./dist/js/tabler.min.js?1692870487" defer></script>
 <script src="./dist/js/demo.min.js?1692870487" defer></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
   // Function to retrieve token from localStorage
@@ -269,11 +273,11 @@
   if (!isTokenAvailable()) {
       redirectToLogin();
   }
-  //added new ajax jquery
+  
   // Function to populate Academic Year Dropdown
   function populateAcademicYearDropdown() {
       $.ajax({
-          url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
+          url: "http://127.0.0.1:8000/academicyears/getacadyr",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -295,7 +299,7 @@
   // Function to populate Curriculum Year Dropdown
   function populateCurriculumYearDropdown() {
     $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/managecurriculums/getcurnames",
+        url: "http://127.0.0.1:8000/managecurriculums/getcurnames",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -316,9 +320,16 @@
 }
 // Function to fetch faculties and populate dropdown
 function fetchFaculties() {
+  // Set up the request headers
+  var fistoken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJjNmYzMDFjZTg3OWE0M2YwOWMyZWYyZjUzODk1YjY1OSJ9.L0Xs2-s2hAhnOuUEyciVLPHOHDtH3OAeC_UgoMP3X64';
+  var headers = {
+    'Authorization': 'API-Key',
+    'token': fistoken
+};
   $.ajax({
     url: "https://pupqcfis-com.onrender.com/api/all/FISFaculty",
     type: "GET",
+    headers: headers,
     success: function(response) {
       // Populate the dropdown with faculty names and IDs
       const facultyDropdown = $("#facultyDropdown");
@@ -354,10 +365,16 @@ $("#searchFacultyButton").on("click", function() {
 
 function searchFaculty() {
   const facultyId = $("#facultyDropdown").val();
+  var fistoken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJjNmYzMDFjZTg3OWE0M2YwOWMyZWYyZjUzODk1YjY1OSJ9.L0Xs2-s2hAhnOuUEyciVLPHOHDtH3OAeC_UgoMP3X64';
+  var headers = {
+    'Authorization': 'API-Key',
+    'token': fistoken
+};
 
   $.ajax({
     url: `https://pupqcfis-com.onrender.com/api/FISFaculty/${facultyId}`,
     type: "GET",
+    headers: headers,
     success: function (response) {
       // Update the UI with faculty details
       const facultyDetails = response.Faculties;
@@ -387,7 +404,7 @@ function searchFaculty() {
 // Function to populate Program Dropdown
 function populateProgramDropdown() {
     $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
+        url: "http://127.0.0.1:8000/courses/getcourse",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -410,7 +427,7 @@ function populateProgramDropdown() {
 // Function to populate Year Level Dropdown
 function populateYearLevelDropdown() {
     $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/yearlevels/getyearlevels",
+        url: "http://127.0.0.1:8000/yearlevels/getyearlevels",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -433,7 +450,7 @@ function populateYearLevelDropdown() {
 // Function to populate Semester Dropdown
 function populateSemesterDropdown() {
     $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
+        url: "http://127.0.0.1:8000/semesters/getsemester",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -482,9 +499,39 @@ $(document).on('click', '#validator-btn', function () {
   const end_time = formatTime(row.find('td:nth-child(9) input').val());
   const room_id = row.find('td:nth-child(10) select').val();
 
+  // Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'warning', // Change the icon to 'warning' for a caution icon
+    title: 'Missing input!',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Invalid',
+    text: message,
+  });
+} 
+
   // Make a request to the validation endpoint
   $.ajax({
-    url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/validate-schedule",
+    url: "http://127.0.0.1:8000/manageschedules/validate-schedule",
     type: 'POST',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -509,12 +556,18 @@ $(document).on('click', '#validator-btn', function () {
     success: function (response) {
       console.log('Validation Success:', response);
       // Handle success (e.g., update UI, show message)
-      alert('Schedule is validated.');
+      showSuccessAlert('Schedule is validated.');
     },
     error: function (xhr, status, error) {
-      console.log('Validation Error:', xhr.responseText);
-      // Handle error (e.g., update UI, show message)
-      alert('Conflicting schedule found.');
+      console.log('Validation Error:', xhr.status, xhr.responseText);
+      // Check the status code of the response
+      if (xhr.status === 400) {
+        // Handle 400 error (conflicting schedule)
+        showErrorAlert('Conflicting schedule found.');
+      } else {
+        // Handle other errors (status code 500)
+        showCautionAlert('Please fill up the required inputs for this schedule and try again.');
+      }
     }
   }).fail(function (jqXHR, textStatus, errorThrown) {
     console.log('Validation AJAX Failed:', textStatus, errorThrown);
@@ -550,11 +603,39 @@ function getTableData() {
 
   return rows;
 }
-
+// Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'error', // Change the icon to 'warning' for a caution icon
+    title: 'Missing inputs/Conflicting schedule',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'Invalid',
+    title: 'Conflict!',
+    text: message,
+  });
+}
 // Function to send bulk insert data
 function sendBulkInsertData(data) {
   $.ajax({
-      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/bulk-post",
+      url: "http://127.0.0.1:8000/manageschedules/bulk-post",
       type: 'POST',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -564,13 +645,19 @@ function sendBulkInsertData(data) {
       success: function (response) {
           console.log('Bulk Insert Success:', response);
           // Show success message
-          alert('Schedule successfully added without conflicts!');
+          showSuccessAlert('Schedule successfully added without conflicts!');
           // Optionally clear the table or any other actions
       },
       error: function (xhr, status, error) {
-          console.log('Bulk Insert Error:', xhr.responseText);
-          // Show error message
-          alert('An error occured, Conflicting schedule found');
+        console.log('Validation Error:', xhr.status, xhr.responseText);
+        // Check the status code of the response
+        if (xhr.status === 400) {
+          // Handle 400 error (conflicting schedule)
+          showErrorAlert('Conflicting schedule found on the attempt, please re-validate it using the validator button or re-check the rows for each schedules.');
+        } else {
+          // Handle other errors (status code 500)
+          showCautionAlert('Caused by the following: Schedules found on the table may be conflicting with the other rows / Missing inputs');
+        }
       }
   }).fail(function (jqXHR, textStatus, errorThrown) {
       console.log('Bulk Insert AJAX Failed:', textStatus, errorThrown);
@@ -595,7 +682,7 @@ $('#submit-btn').on('click', function () {
 // Function to populate Class Dropdown
 function populateClassDropdown() {
   $.ajax({
-      url: "https://schedulerserver-6e565d991c10.herokuapp.com/classes/getclass",
+      url: "http://127.0.0.1:8000/classes/getclass",
       type: 'GET',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -624,7 +711,7 @@ function populateClassDropdown() {
 
 function populateRoomDropdownOutsideTable() {
   $.ajax({
-    url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
+    url: "http://127.0.0.1:8000/rooms/getrooms",
     type: 'GET',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -664,7 +751,7 @@ $('#searchRoomButton').on('click', function () {
 
   // Make a request to get room schedule data
   $.ajax({
-      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/findroomscheds",
+      url: "http://127.0.0.1:8000/manageschedules/findroomscheds",
       type: 'GET',
       data: {
           acadyear_id: selectedAcadyearId,
@@ -699,7 +786,7 @@ $('#searchRoomButton').on('click', function () {
                   // Make a separate request to get class details based on class_id
                   $.ajax({
                       type: "GET",
-                      url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
+                      url: `http://127.0.0.1:8000/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
                       headers: {
                           'Authorization': `Bearer ${getToken()}`
                       },
@@ -759,9 +846,38 @@ $('#filter-btn').on('click', function () {
   const semester = $('#semesterDropdown option:selected').text();
   const semesterId = $('#semesterDropdown option:selected').data('id');
 
+  // Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'warning', // Change the icon to 'warning' for a caution icon
+    title: 'Missing input!',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: message,
+  });
+}
   // Make a request to get filtered curriculum data
   $.ajax({
-    url: "https://schedulerserver-6e565d991c10.herokuapp.com/curriculums/filtercuri",
+    url: "http://127.0.0.1:8000/curriculums/filtercuri",
     type: 'GET',
     data: {
       curriculum_year_name: curriculumYearId,
@@ -773,14 +889,16 @@ $('#filter-btn').on('click', function () {
       'Authorization': `Bearer ${getToken()}`
     },
     success: function (response) {
+      showSuccessAlert('Data loaded successfully');
       // Populate the table with the filtered data
       populateCurriculumTable(response);
             // Update the room dropdown with the new data
             populateRoomDropdown(response);
+
     },
     error: function (xhr, status, error) {
       console.log('Error fetching filtered curriculum data:', xhr.responseText);
-      alert('Please select for all dropdowns first');
+      showCautionAlert('Please fill the dropdowns first');
     }
   });
 });
@@ -799,7 +917,7 @@ function populateCurriculumTable(data) {
 
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
+        url: "http://127.0.0.1:8000/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
@@ -857,7 +975,7 @@ function populateCurriculumTable(data) {
               <td>${labHoursRow.units}</td>
               <td>${labHoursRow.tuition_hours}</td>
               <td>
-                <span class="label">For lab</span>
+                <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: blue;">For Lab hours</span>
                 <select class="form-select" style="font-size: small; width: 150px;">
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -885,7 +1003,7 @@ function populateCurriculumTable(data) {
               </td>
             </tr>
           `);
-           // Add a new row for lab hours
+           // Add a new row for additional schedules
            tableBody.append(`
            <tr>
              <td>${labHoursRow.subject_code}</td>
@@ -895,7 +1013,7 @@ function populateCurriculumTable(data) {
              <td>${labHoursRow.units}</td>
              <td>${labHoursRow.tuition_hours}</td>
              <td>
-               <span class="label">For additional Schedule</span>
+              <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: red;">For additional</span>
                <select class="form-select" style="font-size: small; width: 150px;">
                  <option value="Monday">Monday</option>
                  <option value="Tuesday">Tuesday</option>
@@ -920,7 +1038,7 @@ function populateCurriculumTable(data) {
              </td>
              <td>
                <button class="btn btn-secondary" id="validator-btn">Validate</button>
-               <button class="btn btn-danger" onclick="deleteRow(this)">Delete</button>
+               <button class="btn btn-danger" onclick="deleteRow(this)">Remove</button>
              </td>
            </tr>
          `);
@@ -938,7 +1056,7 @@ function populateCurriculumTable(data) {
     } else {
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
+        url: "http://127.0.0.1:8000/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
@@ -1003,7 +1121,6 @@ function deleteRow(button) {
   const currentRow = $(button).closest('tr');
   currentRow.remove();
 }
-
 // Function to generate room dropdown options
 function generateRoomOptions(roomData) {
   let options = '';
