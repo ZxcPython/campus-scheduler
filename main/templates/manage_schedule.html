@@ -277,7 +277,7 @@
   // Function to populate Academic Year Dropdown
   function populateAcademicYearDropdown() {
       $.ajax({
-          url: "https://pupqcfis-com.onrender.com/academicyears/getacadyr",
+          url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
           type: 'GET',
           headers: {
               'Authorization': `Bearer ${getToken()}`
@@ -299,7 +299,7 @@
   // Function to populate Curriculum Year Dropdown
   function populateCurriculumYearDropdown() {
     $.ajax({
-        url: "https://pupqcfis-com.onrender.com/managecurriculums/getcurnames",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/managecurriculums/getcurnames",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -404,7 +404,7 @@ function searchFaculty() {
 // Function to populate Program Dropdown
 function populateProgramDropdown() {
     $.ajax({
-        url: "https://pupqcfis-com.onrender.com/courses/getcourse",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -427,7 +427,7 @@ function populateProgramDropdown() {
 // Function to populate Year Level Dropdown
 function populateYearLevelDropdown() {
     $.ajax({
-        url: "https://pupqcfis-com.onrender.com/yearlevels/getyearlevels",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/yearlevels/getyearlevels",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -450,7 +450,7 @@ function populateYearLevelDropdown() {
 // Function to populate Semester Dropdown
 function populateSemesterDropdown() {
     $.ajax({
-        url: "https://pupqcfis-com.onrender.com/semesters/getsemester",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -531,7 +531,7 @@ function showErrorAlert(message) {
 
   // Make a request to the validation endpoint
   $.ajax({
-    url: "https://pupqcfis-com.onrender.com/manageschedules/validate-schedule",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/validate-schedule",
     type: 'POST',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -635,7 +635,7 @@ function showErrorAlert(message) {
 // Function to send bulk insert data
 function sendBulkInsertData(data) {
   $.ajax({
-      url: "https://pupqcfis-com.onrender.com/manageschedules/bulk-post",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/bulk-post",
       type: 'POST',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -682,7 +682,7 @@ $('#submit-btn').on('click', function () {
 // Function to populate Class Dropdown
 function populateClassDropdown() {
   $.ajax({
-      url: "https://pupqcfis-com.onrender.com/classes/getclass",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/classes/getclass",
       type: 'GET',
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -711,7 +711,7 @@ function populateClassDropdown() {
 
 function populateRoomDropdownOutsideTable() {
   $.ajax({
-    url: "https://pupqcfis-com.onrender.com/rooms/getrooms",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
     type: 'GET',
     headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -751,7 +751,7 @@ $('#searchRoomButton').on('click', function () {
 
   // Make a request to get room schedule data
   $.ajax({
-      url: "https://pupqcfis-com.onrender.com/manageschedules/findroomscheds",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/findroomscheds",
       type: 'GET',
       data: {
           acadyear_id: selectedAcadyearId,
@@ -786,7 +786,7 @@ $('#searchRoomButton').on('click', function () {
                   // Make a separate request to get class details based on class_id
                   $.ajax({
                       type: "GET",
-                      url: `https://pupqcfis-com.onrender.com/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
+                      url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
                       headers: {
                           'Authorization': `Bearer ${getToken()}`
                       },
@@ -877,7 +877,7 @@ function showErrorAlert(message) {
 }
   // Make a request to get filtered curriculum data
   $.ajax({
-    url: "https://pupqcfis-com.onrender.com/curriculums/filtercuri",
+    url: "https://schedulerserver-6e565d991c10.herokuapp.com/curriculums/filtercuri",
     type: 'GET',
     data: {
       curriculum_year_name: curriculumYearId,
@@ -917,7 +917,7 @@ function populateCurriculumTable(data) {
 
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: "https://pupqcfis-com.onrender.com/rooms/getrooms",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
@@ -1056,7 +1056,7 @@ function populateCurriculumTable(data) {
     } else {
       // Make a request to get room data for each curriculum row
       $.ajax({
-        url: "https://pupqcfis-com.onrender.com/rooms/getrooms",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
         type: 'GET',
         data: {
           // Include any additional filtering criteria for rooms
