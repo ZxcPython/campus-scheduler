@@ -36,7 +36,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-            <a href=".">
+            <a href="/home">
               <img src="{% static 'img/PUPLogo.png' %}" width="150" height="72" alt="PUP Scheduler" class="navbar-brand-image">Scheduler
             </a>
           </h1>
@@ -152,10 +152,11 @@
 
 
 		<!-- Tabler Core -->
-		<script src="{% static 'js/tabler.min.js' %}" defer></script>
-		<script src="{% static 'js/demo.min.js' %}" defer></script>
-		<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
-      <script>
+    <script src="{% static 'js/tabler.min.js' %}" defer></script>
+    <script src="{% static 'js/demo.min.js' %}" defer></script>
+    <script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+    <script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const logoutLink = document.getElementById('logoutLink');
     
@@ -166,6 +167,32 @@
                     window.location.href = "/index";
                 });
             }
+    
+            // Check if user is logged in and has correct usertype
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                window.location.href = "/index";
+                return;
+            }
+    
+            let decodedToken;
+            try {
+                decodedToken = jwtJsDecode.decode(accessToken);
+            } catch (error) {
+                window.location.href = "/index";
+                return;
+            }
+    
+            let usertype = decodedToken.payload.usertype;
+            if (usertype !== 'superadmin') {
+                logout(); // Assuming you have a logout function to handle this
+                return;
+            }
+    
+            function logout() {
+                localStorage.removeItem('accessToken');
+                window.location.href = "/index";
+            }
         });
-    </script>
+    </script>    
   </header>

@@ -37,6 +37,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/fisconfig.js' %}" defer></script>
     <script>
         //always import the jquery para magamit natin ang ajax jquery, para ito sa mga gagamit ng api, pero pwede rin namang axios etc
         $(document).ready(function() {
@@ -63,9 +64,17 @@
             }
 
             function refreshFacultyInfoTable() {
+            
+                // Set up the request headers
+                var headers = {
+                    'Authorization': 'API-Key',
+                    'token': fistoken
+                };
+            
                 $.ajax({
                     url: 'https://pupqcfis-com.onrender.com/api/all/FISFaculty',
                     type: 'GET',
+                    headers: headers, // Include the headers in the request
                     success: function(data) {
                         displayFacultyInfoTable(data);
                     },
@@ -74,7 +83,7 @@
                     }
                 });
             }
-
+            
             refreshFacultyInfoTable();
         });
     </script>

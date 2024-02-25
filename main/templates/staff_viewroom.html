@@ -8,10 +8,12 @@
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
 
 
 <body>
-{% include "adminnavbar.html" %}
+{% include "staffnavbar.html" %}
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -21,8 +23,8 @@
           <div class="col">
             <div class="mb-1">
               <ol class="breadcrumb" aria-label="breadcrumbs">
-              <li class="breadcrumb-item"><a href="{% url 'adminviewschedule' %}">View Schedule</a></li>
-              <li class="breadcrumb-item"><a href="{% url 'adminviewroom' %}">Room schedule</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'staffviewschedule' %}">View Schedule</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'staff_viewroom' %}">Room schedule</a></li>
               </ol>
             </div>
             <h2 class="page-title" style="margin-bottom: 20px;">
@@ -38,7 +40,7 @@
 <div class="col-12">
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Search Room Schedule</h3>
+      <h3 class="card-title">Search Class Schedule</h3>
     </div>
     <div class="card-body">
       <div class="row align-items-center">
@@ -115,18 +117,18 @@
           <table class="table table-transparent table-responsive mt-5">
             <thead>
               <tr>
-                  <th>Monday</th>
-                  <th>Tuesday</th>
-                  <th>Wednesday</th>
-                  <th>Thursday</th>
-                  <th>Friday</th>
-                  <th>Saturday</th>
-                  <th>Sunday</th>
+                <th>Time</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
               </tr>
-          </thead>
-            <tbody id="roomTableBody">
-              <tr>
-              </tr>
+            </thead>
+            <tbody id="timetablebody">
+              <!-- Add rows and time slots here dynamically -->
             </tbody>
           </table>
           <p class="text-secondary text-center mt-5">You can download the file at the upper right corner of the page!</p>
@@ -136,22 +138,38 @@
   </div>
   <footer class="footer footer-transparent d-print-none">
     <div class="container-xl">
-      <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-        <ul class="list-inline list-inline-dots mb-0">
-          <li class="list-inline-item">
-            Copyright &copy; 2024
-            <a href="." class="link-secondary">Software Research Group 11th Gen</a>.
-            All rights reserved.
-          </li>
-          <li class="list-inline-item">
-            <a class="link-secondary" rel="noopener">
-              Scheduling System
-            </a>
-          </li>
-        </ul>
+      <div class="row text-center align-items-center flex-row-reverse">
+        <div class="col-lg-auto ms-lg-auto">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item"><a href="https://tabler.io/docs" target="_blank" class="link-secondary" rel="noopener">Documentation</a></li>
+            <li class="list-inline-item"><a href="./license.html" class="link-secondary">License</a></li>
+            <li class="list-inline-item"><a href="https://github.com/tabler/tabler" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
+            <li class="list-inline-item">
+              <a href="https://github.com/sponsors/codecalm" target="_blank" class="link-secondary" rel="noopener">
+                <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-pink icon-filled icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+                Sponsor
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item">
+              Copyright &copy; 2023
+              <a href="." class="link-secondary">Tabler</a>.
+              All rights reserved.
+            </li>
+            <li class="list-inline-item">
+              <a href="./changelog.html" class="link-secondary" rel="noopener">
+                v1.0.0-beta20
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    </footer>
+  </footer>
 </div>
 </div>
 <!-- Libs JS -->
@@ -162,6 +180,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.10/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="{% static 'js/fisconfig.js' %}" defer></script>
 <script>
   // Function to retrieve token from localStorage
   function getToken() {
@@ -256,26 +275,28 @@ function populateRoomDropdownOutsideTable() {
   });
 }
 
+
 // Call the function to populate the rmDropdown outside the table
 populateRoomDropdownOutsideTable();
-
 $('#searchButton').on('click', function () {
   // Get selected values and names from dropdowns
   const academicYearId = $('#academicyearDropdown option:selected').data('id');
   const academicYearName = $('#academicyearDropdown option:selected').text();
   const semesterId = $('#semesterDropdown option:selected').data('id');
   const semesterName = $('#semesterDropdown option:selected').text();
-  const roomID = $('#rmDropdown option:selected').data('id');
+  
+  // Fetch room ID instead of using text directly
+  const roomID = $('#rmDropdown option:selected').val();
   const roomName = $('#rmDropdown option:selected').text();
 
   // Make a request to get filtered faculty loading data
   $.ajax({
-      url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/findroom",
+      url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/findroomwithfaculty",
       type: 'GET',
       data: {
           acadyear_id: academicYearId,
           semester_id: semesterId,
-          room_id: roomID
+          roomname: roomName
       },
       headers: {
           'Authorization': `Bearer ${getToken()}`
@@ -297,19 +318,56 @@ $('#searchButton').on('click', function () {
   });
 });
 
-function populateRoomScheduleTable(data) {
-  const roomTableBody = $('#roomTableBody');
-  roomTableBody.empty();
+// Add this function for generating 12-hour format time slots
+function generateTimeSlots() {
+  const timeSlots = [];
+  let startTime = 7; // Start at 7:00 AM
+
+  // Generate time slots from 7:00 AM to 10:00 PM with 3-hour intervals
+  while (startTime <= 21) {
+    const startTimeString = startTime < 12 ? `${startTime}:00 am` : `${startTime - 12}:00 pm`;
+    const endTimeString = (startTime + 3) < 12 ? `${startTime + 3}:00 am` : `${startTime + 3 - 12}:00 pm`;
+
+    const timeSlot = `${startTimeString} - ${endTimeString}`;
+    timeSlots.push(timeSlot);
+
+    startTime += 3;
+  }
+
+  return timeSlots;
+}
+
+// Updated function to convert time to 24-hour format
+function convertTo24HourFormat(time) {
+  const [hours, minutes] = time.split(':');
+  const isPM = time.toLowerCase().includes('pm');
+
+  let hoursIn24Format = parseInt(hours, 10);
+
+  if (isPM && hoursIn24Format !== 12) {
+    hoursIn24Format += 12;
+  } else if (!isPM && hoursIn24Format === 12) {
+    hoursIn24Format = 0;
+  }
+
+  return hoursIn24Format * 100 + parseInt(minutes, 10);
+}
+// Add this function for checking if a time is in a specific slot
+function isTimeInSlot(time, timeSlot) {
+  const timeInSlot = convertTo24HourFormat(time);
+  const slotStart = convertTo24HourFormat(timeSlot.split(' - ')[0]);
+  const slotEnd = convertTo24HourFormat(timeSlot.split(' - ')[1]);
+
+  return timeInSlot >= slotStart && timeInSlot < slotEnd;
+}
+// Updated function to populate room schedule table
+async function populateRoomScheduleTable(data) {
+  const timetableBody = $('#timetablebody');
+  timetableBody.empty();
 
   if (data && data.length > 0) {
-    // Sort the schedules based on day and time
-    data.sort((a, b) => {
-      if (a.day !== b.day) {
-        return a.day.localeCompare(b.day);
-      } else {
-        return a.start_time.localeCompare(b.start_time);
-      }
-    });
+    // Generate 12-hour format time slots with 3-hour intervals
+    const timeSlots = generateTimeSlots();
 
     // Create an object to organize data by day
     const organizedData = {
@@ -327,54 +385,81 @@ function populateRoomScheduleTable(data) {
       organizedData[schedule.day].push(schedule);
     });
 
-    // Iterate through each day
+    // Sort schedules by day, start time, and end time
     for (const day in organizedData) {
       if (organizedData.hasOwnProperty(day)) {
-        const schedules = organizedData[day];
-        schedules.sort((a, b) => a.start_time.localeCompare(b.start_time));
-
-        // Iterate through each schedule
-        schedules.forEach(schedule => {
-          const row = $('<tr></tr>');
-
-          const formattedStartTime = formatTime(schedule.start_time);
-          const formattedEndTime = formatTime(schedule.end_time);
-
-          // Make a separate request to get class details based on class_id
-          $.ajax({
-            type: "GET",
-            url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`, // Adjust the endpoint accordingly
-            headers: {
-              'Authorization': `Bearer ${getToken()}`
-            },
-            success: function (classData) {
-              if (classData.data) {
-                // Use class name if available, otherwise show 'N/A'
-                const className = classData.data.classname || 'No Class';
-
-                // Find the corresponding td element for the day
-                const columnIndex = $('thead th:contains(' + day + ')').index();
-
-                // Add empty cells for days without schedules before the actual cell
-                for (let k = row.children().length; k < columnIndex; k++) {
-                  row.append('<td></td>');
-                }
-
-                // Append the schedule card to the row
-                row.append(`<td>${className}<br>${formattedStartTime} - ${formattedEndTime}</td>`);
-
-                // Append the row to the table
-                roomTableBody.append(row);
-              } else {
-                console.error("Class data not available:", classData);
-              }
-            },
-            error: function (error) {
-              console.error("Error fetching class details:", error);
-            }
-          });
+        organizedData[day].sort((a, b) => {
+          if (a.fstart_time !== b.fstart_time) {
+            return convertTo24HourFormat(a.fstart_time) - convertTo24HourFormat(b.fstart_time);
+          }
+          return convertTo24HourFormat(a.fend_time) - convertTo24HourFormat(b.fend_time);
         });
       }
+    }
+
+    // Function to get faculty name asynchronously
+    function getFacultyNameAsync(schedule) {
+                      // Set up the request headers
+                      var headers = {
+                        'Authorization': 'API-Key',
+                        'token': fistoken
+                    };
+      return new Promise((resolve, reject) => {
+        // Make a separate request to get faculty details based on facultyId
+        $.ajax({
+          url: `https://pupqcfis-com.onrender.com/api/FISFaculty/${schedule.facultyid}`,
+          type: "GET",
+          headers: headers,
+          success: function (facultyData) {
+            const facultyName = (facultyData && facultyData.Faculties && `${facultyData.Faculties.FirstName} ${facultyData.Faculties.LastName}`) || schedule.facultyid;
+            resolve(facultyName);
+          },
+          error: function () {
+            reject('Error fetching faculty details.');
+          }
+        });
+      });
+    }
+
+    // Iterate through each time slot
+    for (const timeSlot of timeSlots) {
+      const row = $('<tr></tr>');
+      row.append(`<td>${timeSlot}</td>`);
+
+      // Iterate through each day
+      for (const day in organizedData) {
+        if (organizedData.hasOwnProperty(day)) {
+          const schedules = organizedData[day];
+
+          // Filter schedules for the current time slot
+          const filteredSchedules = schedules.filter(schedule =>
+            isTimeInSlot(schedule.fstart_time, timeSlot)
+          );
+
+          // Array to hold promises for faculty name retrieval
+          const facultyPromises = [];
+
+          // Iterate through each filtered schedule
+          filteredSchedules.forEach(schedule => {
+            // Push the promise to the array
+            facultyPromises.push(getFacultyNameAsync(schedule));
+          });
+
+          // Wait for all promises to resolve
+          const facultyNames = await Promise.all(facultyPromises);
+
+          // Append the filtered schedules to the row
+          const scheduleInfo = facultyNames.map((facultyName, index) =>
+            `<br>${facultyName}<br>${filteredSchedules[index].classname}<br>${filteredSchedules[index].course_code}<br>${formatTime(filteredSchedules[index].fstart_time)}-${formatTime(filteredSchedules[index].fend_time)}`
+          ).join('<br>');
+
+          // Append the schedule data to the row
+          row.append(`<td>${scheduleInfo}</td>`);
+        }
+      }
+
+      // Append the row to the timetable
+      timetableBody.append(row);
     }
   } else {
     console.log('No room schedule data found.');
@@ -386,77 +471,71 @@ function formatTime(time) {
   const formattedTime = new Date(`1970-01-01T${time}`);
   return formattedTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
-$('#generate-pdf').on('click', async function () {
-  // Create a new jsPDF instance
-  const pdf = new jsPDF();
+// Function to print the table with room name, academic year, and semester
+function printTable(roomName, acadYR, semDetails) {
+  // Clone the table element
+  const tableClone = $('#timetablebody').closest('table').clone();
 
-  // Add the details content to the PDF
-  const academicYear = $('#academicYearDetails').text();
-  const semester = $('#semesterDetails').text();
-  const roomName = $('#RoomnameDetails').text(); // Use room name instead of class name
+  // Create a new window to print the table
+  const printWindow = window.open('', '_blank');
 
-  pdf.text(`Academic Year: ${academicYear}`, 20, 30);
-  pdf.text(`Semester: ${semester}`, 20, 40);
-  pdf.text(`Room: ${roomName}`, 20, 50);
-
-  // Add a line break
-  pdf.text('', 20, 70);
-
-  // Construct the table content for room schedule
-  const columns = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const data = [];
-
-  // Adjust the following selector based on your table structure
-  const rows = $('#roomTableBody tr');
-
-  // Iterate through each row
-  rows.each(function () {
-    const row = [];
-    const cells = $(this).find('td');
-
-    // Iterate through each cell in the row
-    cells.each(function () {
-      // Replace &nbsp; with an empty string
-      const cellText = $(this).text().replace(/\u00a0/g, '');
-      // Split cellText into lines and add each line as a separate item in the row
-      const lines = cellText.split(/\r?\n/);
-
-      // Iterate through each line and add to row
-      for (const line of lines) {
-        row.push(line.trim()); // Trim to remove extra spaces
-        if (line.trim().length > 0) {
-          // Add an empty line after each non-empty line
-          row.push('');
-        }
+  // Append the cloned table to the new window
+  printWindow.document.write('<html><head><title>Table Print</title></head><body>');
+  printWindow.document.write('<style>');
+  // Add styling for the table
+  printWindow.document.write(`
+      table {
+          border-collapse: collapse;
+          width: 100%; /* Extend table width to fit page */
+          font-size: 14px;
+          table-layout: fixed; /* Fix the table layout */
+          max-height: 90vh; /* Set maximum height for the table */
+          overflow-y: auto; /* Add vertical scroll if needed */
       }
-    });
-
-    // Add the row to the data array
-    data.push(row);
-  });
-
-  // Add the table to the PDF with adjusted starting positions for specific columns
-  pdf.autoTable({
-    head: [columns],
-    body: data,
-    startY: 80,
-    headStyles: { fillColor: [139, 0, 0] }, // Dark Red color for the header row
-    didParseCell: function (data) {
-      // Adjust the x-coordinate for specific columns to align content properly
-      if (data.section === 'body') {
-        const rowIndex = data.row.index;
-
-        // Check if it's the second row (schedule)
-        if (rowIndex % 2 === 1) {
-          // Adjust the y-coordinate for the second row
-          data.cell.y += 10;
-        }
+      th, td {
+          border: 1px solid black;
+          padding: 8px;
+          text-align: left;
+          font-size: 12px; /* Adjust font size for data */
       }
-    },
-  });
+      th {
+          background-color: maroon; /* Maroon background for table header */
+          color: white; /* White text color for table header */
+      }
+      .title {
+          text-align: center;
+          font-size: 30px; /* Adjust font size for title */
+          margin-bottom: 5px; /* Add some margin between title and details */
+      }
+      .details {
+          font-size: 20px; /* Adjust font size for details */
+      }
+      tr:first-child {
+          background-color: white; /* White background for the first row */
+      }
+      tr:nth-child(even) {
+          background-color: #f2f2f2; /* Gray background for even rows */
+      }
+  `);
+  printWindow.document.write('</style>');
+  // Add the room name, academic year, and semester as the title
+  printWindow.document.write(`<h1 class="title">${roomName || 'Room Name'}</h1>`);
+  printWindow.document.write(`<div class="details">${acadYR || 'Academic Year'} | ${semDetails || 'Semester'}</div>`);
+  printWindow.document.write(tableClone.prop('outerHTML'));
+  printWindow.document.write('</body></html>');
 
-  // Save the PDF
-  pdf.save('room_schedule.pdf');
+  // Print the window
+  printWindow.print();
+}
+
+// Add an event listener to the button for printing the table
+$('#generate-pdf').on('click', function() {
+  // Fetch the room name, academic year, and semester from the HTML
+  const roomName = $('#RoomnameDetails').text();
+  const acadYR = $('#academicYearDetails').text();
+  const semDetails = $('#semesterDetails').text();
+  // Print the table with the room name, academic year, and semester
+  printTable(roomName, acadYR, semDetails);
 });
   });
 </script>

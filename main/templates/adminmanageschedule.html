@@ -5,6 +5,12 @@
 <link href="{% static 'css/tabler-payments.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 
 <body>
 {% include "adminnavbar.html" %}
@@ -108,7 +114,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Room</th>
-                            <th>Validator</th>
+                            <th>Validator/Action</th>
                           </tr>
                         </thead>
                         <tbody id="scheduleTableBody">
@@ -267,7 +273,7 @@
   if (!isTokenAvailable()) {
       redirectToLogin();
   }
-  //added new ajax jquery
+  
   // Function to populate Academic Year Dropdown
   function populateAcademicYearDropdown() {
       $.ajax({
@@ -480,6 +486,36 @@ $(document).on('click', '#validator-btn', function () {
   const end_time = formatTime(row.find('td:nth-child(9) input').val());
   const room_id = row.find('td:nth-child(10) select').val();
 
+  // Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'warning', // Change the icon to 'warning' for a caution icon
+    title: 'Missing input!',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Invalid',
+    text: message,
+  });
+} 
+
   // Make a request to the validation endpoint
   $.ajax({
     url: "https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/validate-schedule",
@@ -507,12 +543,18 @@ $(document).on('click', '#validator-btn', function () {
     success: function (response) {
       console.log('Validation Success:', response);
       // Handle success (e.g., update UI, show message)
-      alert('Schedule is validated.');
+      showSuccessAlert('Schedule is validated.');
     },
     error: function (xhr, status, error) {
-      console.log('Validation Error:', xhr.responseText);
-      // Handle error (e.g., update UI, show message)
-      alert('Conflicting schedule found.');
+      console.log('Validation Error:', xhr.status, xhr.responseText);
+      // Check the status code of the response
+      if (xhr.status === 400) {
+        // Handle 400 error (conflicting schedule)
+        showErrorAlert('Conflicting schedule found.');
+      } else {
+        // Handle other errors (status code 500)
+        showCautionAlert('Please fill up the required inputs for this schedule and try again.');
+      }
     }
   }).fail(function (jqXHR, textStatus, errorThrown) {
     console.log('Validation AJAX Failed:', textStatus, errorThrown);
@@ -548,7 +590,35 @@ function getTableData() {
 
   return rows;
 }
-
+// Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'error', // Change the icon to 'warning' for a caution icon
+    title: 'Missing inputs/Conflicting schedule',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'Invalid',
+    title: 'Conflict!',
+    text: message,
+  });
+}
 // Function to send bulk insert data
 function sendBulkInsertData(data) {
   $.ajax({
@@ -562,13 +632,19 @@ function sendBulkInsertData(data) {
       success: function (response) {
           console.log('Bulk Insert Success:', response);
           // Show success message
-          alert('Schedule successfully added without conflicts!');
+          showSuccessAlert('Schedule successfully added without conflicts!');
           // Optionally clear the table or any other actions
       },
       error: function (xhr, status, error) {
-          console.log('Bulk Insert Error:', xhr.responseText);
-          // Show error message
-          alert('An error occured, Conflicting schedule found');
+        console.log('Validation Error:', xhr.status, xhr.responseText);
+        // Check the status code of the response
+        if (xhr.status === 400) {
+          // Handle 400 error (conflicting schedule)
+          showErrorAlert('Conflicting schedule found on the attempt, please re-validate it using the validator button or re-check the rows for each schedules.');
+        } else {
+          // Handle other errors (status code 500)
+          showCautionAlert('Caused by the following: Schedules found on the table may be conflicting with the other rows / Missing inputs');
+        }
       }
   }).fail(function (jqXHR, textStatus, errorThrown) {
       console.log('Bulk Insert AJAX Failed:', textStatus, errorThrown);
@@ -757,6 +833,35 @@ $('#filter-btn').on('click', function () {
   const semester = $('#semesterDropdown option:selected').text();
   const semesterId = $('#semesterDropdown option:selected').data('id');
 
+  // Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'warning', // Change the icon to 'warning' for a caution icon
+    title: 'Missing input!',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+  });
+}
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: message,
+  });
+}
   // Make a request to get filtered curriculum data
   $.ajax({
     url: "https://schedulerserver-6e565d991c10.herokuapp.com/curriculums/filtercuri",
@@ -771,14 +876,16 @@ $('#filter-btn').on('click', function () {
       'Authorization': `Bearer ${getToken()}`
     },
     success: function (response) {
+      showSuccessAlert('Data loaded successfully');
       // Populate the table with the filtered data
       populateCurriculumTable(response);
             // Update the room dropdown with the new data
             populateRoomDropdown(response);
+
     },
     error: function (xhr, status, error) {
       console.log('Error fetching filtered curriculum data:', xhr.responseText);
-      alert('Please select for all dropdowns first');
+      showCautionAlert('Please fill the dropdowns first');
     }
   });
 });
@@ -855,6 +962,7 @@ function populateCurriculumTable(data) {
               <td>${labHoursRow.units}</td>
               <td>${labHoursRow.tuition_hours}</td>
               <td>
+                <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: blue;">For Lab hours</span>
                 <select class="form-select" style="font-size: small; width: 150px;">
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -882,6 +990,45 @@ function populateCurriculumTable(data) {
               </td>
             </tr>
           `);
+           // Add a new row for additional schedules
+           tableBody.append(`
+           <tr>
+             <td>${labHoursRow.subject_code}</td>
+             <td>${labHoursRow.subject_name}</td>
+             <td>${labHoursRow.lecture_hours}</td>
+             <td>${labHoursRow.lab_hours}</td>
+             <td>${labHoursRow.units}</td>
+             <td>${labHoursRow.tuition_hours}</td>
+             <td>
+              <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: red;">For additional</span>
+               <select class="form-select" style="font-size: small; width: 150px;">
+                 <option value="Monday">Monday</option>
+                 <option value="Tuesday">Tuesday</option>
+                 <option value="Wednesday">Wednesday</option>
+                 <option value="Thursday">Thursday</option>
+                 <option value="Friday">Friday</option>
+                 <option value="Saturday">Saturday</option>
+                 <option value="Sunday">Sunday</option>
+               </select>
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                 <option value=""></option>
+                 ${generateRoomOptions(roomResponse.data)}
+               </select>
+             </td>
+             <td>
+               <button class="btn btn-secondary" id="validator-btn">Validate</button>
+               <button class="btn btn-danger" onclick="deleteRow(this)">Remove</button>
+             </td>
+           </tr>
+         `);
 
           // Initialize Select2 for the room dropdowns
           $('.select2-room').select2({
@@ -956,7 +1103,11 @@ function populateCurriculumTable(data) {
     }
   });
 }
-
+// Function to delete a row
+function deleteRow(button) {
+  const currentRow = $(button).closest('tr');
+  currentRow.remove();
+}
 // Function to generate room dropdown options
 function generateRoomOptions(roomData) {
   let options = '';

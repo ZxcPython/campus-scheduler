@@ -129,7 +129,6 @@
           <table class="table table-transparent table-responsive mt-5">
             <thead>
               <tr>
-                <th class="text-center"></th>
                 <th>Course Code</th>
                 <th>Course Name</th>
                 <th class="text-center" style="width: 1%">Lec</th>
@@ -151,22 +150,38 @@
   </div>
   <footer class="footer footer-transparent d-print-none">
     <div class="container-xl">
-      <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-        <ul class="list-inline list-inline-dots mb-0">
-          <li class="list-inline-item">
-            Copyright &copy; 2024
-            <a href="." class="link-secondary">Software Research Group 11th Gen</a>.
-            All rights reserved.
-          </li>
-          <li class="list-inline-item">
-            <a class="link-secondary" rel="noopener">
-              Scheduling System
-            </a>
-          </li>
-        </ul>
+      <div class="row text-center align-items-center flex-row-reverse">
+        <div class="col-lg-auto ms-lg-auto">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item"><a href="https://tabler.io/docs" target="_blank" class="link-secondary" rel="noopener">Documentation</a></li>
+            <li class="list-inline-item"><a href="./license.html" class="link-secondary">License</a></li>
+            <li class="list-inline-item"><a href="https://github.com/tabler/tabler" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
+            <li class="list-inline-item">
+              <a href="https://github.com/sponsors/codecalm" target="_blank" class="link-secondary" rel="noopener">
+                <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-pink icon-filled icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+                Sponsor
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+          <ul class="list-inline list-inline-dots mb-0">
+            <li class="list-inline-item">
+              Copyright &copy; 2023
+              <a href="." class="link-secondary">Tabler</a>.
+              All rights reserved.
+            </li>
+            <li class="list-inline-item">
+              <a href="./changelog.html" class="link-secondary" rel="noopener">
+                v1.0.0-beta20
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    </footer>
+  </footer>
 </div>
 </div>
 <!-- Libs JS -->
@@ -222,71 +237,141 @@
       });
       $('#generate-pdf').on('click', function () {
         // Create a new jsPDF instance
-        const pdf = new jsPDF();
-      
-        // Add the details content to the PDF
-        const academicYear = $('#academicYearDetails').text();
-        const semester = $('#semesterDetails').text();
-        const program = $('#programDetails').text();
-        const className = $('#classTitle').text();
-      
-        pdf.text(`Program: ${program}`, 20, 30);
-        pdf.text(`Academic Year: ${academicYear}`, 20, 40);
-        pdf.text(`Semester: ${semester}`, 20, 50);
-        pdf.text(`Class: ${className}`, 20, 60);
-      
-        // Add a line break
-        pdf.text('', 20, 70);
-      
-        // Construct the table content
-        const columns = ['', 'Course Code', 'Course Name', 'Lec', 'Lab', 'Units', 'Schedule', 'Room'];
-        const data = [];
-      
-        $('#classScheduleTableBody tr').each(function () {
-          const row = [];
-          $(this).find('td').each(function () {
-            // Replace &nbsp; with an empty string
-            row.push($(this).text().replace(/\u00a0/g, ''));
-          });
-          data.push(row);
+        const pdf = new jsPDF({
+          orientation: 'landscape'
         });
-      
-        // Calculate the starting positions for Course Code and Course Name columns
-        const columnWidths = [0, 40, 90, 20, 20, 20, 50, 20]; // Adjust the widths of each column
-        const startXPositions = columnWidths.reduce((acc, width) => {
-          acc.push(acc.length > 0 ? acc[acc.length - 1] + width : width);
-          return acc;
-        }, []);
-      
-        // Add the table to the PDF with adjusted starting positions for specific columns
-        pdf.autoTable({
-          head: [columns],
-          body: data,
-          startY: 80,
-          headStyles: { fillColor: [139, 0, 0] }, // Dark Red color for the header row
-          didParseCell: function (data) {
-            // Adjust the x-coordinate for specific columns to align content properly
-            if (data.section === 'body') {
-              switch (data.column.index) {
-                // Adjust the x-coordinate for the invisible column
-                case 0: // &nbsp; (invisible column)
-                  data.cell.width = 0; // Set the width to zero
-                  break;
-                case 1: // Course Code
-                  data.cell.x += 5; // Adjust the x-coordinate for Course Code
-                  break;
-                case 2: // Course Name
-                  data.cell.x += 5; // Adjust the x-coordinate for Course Name
-                  break;
-                // Add more cases if needed for other columns
-              }
-            }
-          },
-        });
-      
-        // Save the PDF
-        pdf.save('class_schedule.pdf');
-      });
+  // Load the image and convert it to a data URI
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const scaleFactor = 0.5; // Adjust the scale factor as needed
+    canvas.width = img.width * scaleFactor;
+    canvas.height = img.height * scaleFactor;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const imgData = canvas.toDataURL('image/png');
+     // Add the image to the header
+     pdf.addImage(imgData, 'PNG', 28, 5, 30, 23); // Adjust the coordinates and dimensions as needed
+
+  // Add the header
+  pdf.setFontSize(10);
+  pdf.text('Republic of the Philippines', 60, 12);
+  pdf.setFontType('bold');
+  pdf.text('POLYTECHNIC UNIVERSITY OF THE PHILIPPINES', 60, 18, { opacity: 0.5 });
+  pdf.setFontType('normal');
+  pdf.text('OFFICE OF THE VICE PRESIDENT FOR CAMPUSES', 60, 22, { opacity: 0.5 });
+  pdf.setFontSize(10);
+  pdf.setFontType('bold');
+  pdf.text('QUEZON CITY CAMPUS', 60, 27);
+
+  // Add an underline
+  pdf.line(13, 30, 284, 30);
+
+ // Add the "SCHEDULE OF CLASSES" section
+ pdf.setFont('Arial');
+ pdf.setFontType('bold');
+ pdf.setFontSize(10);
+ pdf.text('SCHEDULE OF CLASSES', 125, 40);
+ const academicYear = $('#academicYearDetails').text();
+ const semester = $('#semesterDetails').text();
+ pdf.text(`${semester}, ${academicYear}`, 120, 45);
+
+  // Add information above the table
+  const program = $('#programDetails').text();
+  pdf.setFontType('bold');
+  pdf.text(`PROGRAM NAME: ${program}`, 20, 55);
+  const className = $('#classTitle').text();
+  pdf.setFontType('bold');
+  pdf.text(`CLASS/SECTION: ${className}`, 200, 55);
+
+  // Construct the table content
+  const columns =  ['Subject Code', 'Description', 'Lec hrs', 'Lab hrs', 'Credited units', 'Day/Time', 'Room no.'];
+  const data = [];
+
+  $('#classScheduleTableBody tr').each(function () {
+  const row = [];
+  $(this).find('td').each(function () {
+    row.push($(this).text());
+  });
+  data.push(row);
+});
+
+  // Add the table to the PDF with adjusted starting positions for specific columns
+  pdf.autoTable({
+    head: [columns],
+    body: data,
+    startY: 60,
+    headStyles: { fillColor: [139, 0, 0] }, // Dark Red color for the header row
+    orientation: 'landscape' 
+  });
+
+  pdf.setFontSize(8);
+  pdf.setFontType('normal');
+  pdf.text('Thank you very much.', 20, pdf.autoTable.previous.finalY + 15);
+  pdf.setFontType('bold');
+  pdf.setFontSize(8);
+  pdf.text('Truly yours,', 20, pdf.autoTable.previous.finalY + 20);
+  pdf.setFontType('bold');
+  pdf.setFontSize(8);
+  pdf.text('DEMELYN E. MONZON,', 20, pdf.autoTable.previous.finalY + 30);
+  pdf.setFontType('bolditalic');
+  pdf.setFontSize(8);
+  pdf.text('Ph.D.', 52, pdf.autoTable.previous.finalY + 30);
+  pdf.setFontType('normal');
+  pdf.setFontSize(8);
+  pdf.text('Head Academic Programs', 20, pdf.autoTable.previous.finalY + 33);
+
+  // Add the footer
+  pdf.setFontSize(6);
+  pdf.text('Rothlehner Bldg., PUP Quezon City Campus, Don Fabian St, Commonwealth, Quezon City Direct Line: 287-82-04: 952-78-18', 20, 197, { opacity: 0.5 });
+  pdf.text('Direct Line: 287-82-04: 952-78-18', 20, 200, { opacity: 0.5 });
+  pdf.text('Website: www.pup.edu.ph | Email: quezoncity@pup.edu.ph', 20, 203, { opacity: 0.5 });
+// Add the faded word at the bottom
+pdf.setFontSize(10);
+pdf.setFontType('bold');
+pdf.setFont('times');
+pdf.setTextColor(139, 0, 0, 0.3); // Fading out color
+pdf.text('THE COUNTRY\'S', 20, 207);
+// Add the faded word at the bottom
+pdf.setFontSize(10);
+pdf.setFontType('bold');
+pdf.setFont('times');
+pdf.setTextColor(139, 0, 0, 0.3); // Fading out color
+
+// Define the word and its superscript
+const word = "1";
+const superscript = "ST";
+
+// Position the word and superscript
+const xPosition = 50;
+const yPosition = 207;
+const superscriptSize = 5; // Adjust the size of the superscript as needed
+const superscriptOffsetX = 2; // Adjust the X offset of the superscript as needed
+const superscriptOffsetY = -1; // Adjust the Y offset of the superscript as needed
+
+// Add the word and superscript
+pdf.text(word, xPosition, yPosition);
+pdf.setFontSize(superscriptSize);
+pdf.textWithLink(superscript, xPosition + superscriptOffsetX, yPosition + superscriptOffsetY, { url: "" });
+pdf.setFontSize(10);
+pdf.setFontType('bold');
+pdf.setFont('times');
+pdf.setTextColor(139, 0, 0, 0.3); // Fading out color
+pdf.text('POLYTECHNIC', 55, 207);
+// Add the faded word at the bottom
+pdf.setFontSize(11);
+pdf.setFontType('bold');
+pdf.setFont('times');
+pdf.setTextColor(139, 0, 0, 0.3); // Fading out color
+pdf.text('U', 81, 207);
+
+ // Save the PDF
+ pdf.save('class_schedule.pdf');
+};
+img.src = '{% static "img/PUPLogo.png" %}'; // Replace this with the path to your image
+});
+
       // Populate Semester Dropdown
       $.ajax({
           url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
@@ -415,7 +500,6 @@ function populateScheduleTable(data) {
                       // Append the row to the table
                       $('#classScheduleTableBody').append(`
                           <tr>
-                              <td class="text-center"></td>
                               <td>${schedule.subject_code}</td>
                               <td>${schedule.subject_name}</td>
                               <td class="text-center">${schedule.lecture_hours}</td>

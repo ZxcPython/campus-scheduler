@@ -124,27 +124,28 @@
 
 
 <footer class="footer footer-transparent d-print-none">
-  <div class="container-xl">
-    <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-      <ul class="list-inline list-inline-dots mb-0">
-        <li class="list-inline-item">
-          Copyright &copy; 2024
-          <a href="." class="link-secondary">Software Research Group 11th Gen</a>.
-          All rights reserved.
-        </li>
-        <li class="list-inline-item">
-          <a class="link-secondary" rel="noopener">
-            Scheduling System
-          </a>
-        </li>
-      </ul>
-    </div>
+<div class="container-xl">
+  <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+    <ul class="list-inline list-inline-dots mb-0">
+      <li class="list-inline-item">
+        Copyright &copy; 2024
+        <a href="." class="link-secondary">Software Research Group 11th Gen</a>.
+        All rights reserved.
+      </li>
+      <li class="list-inline-item">
+        <a class="link-secondary" rel="noopener">
+          Scheduling System
+        </a>
+      </li>
+    </ul>
   </div>
-  </footer>
+</div>
+</footer>
 </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.js"></script>
+<script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
 <script src="{% static 'js/common.js' %}" defer></script>
 <script>
     // Function to retrieve token from localStorage
@@ -152,24 +153,40 @@
         return localStorage.getItem('accessToken');
     }
 
-    // Function to check if the token is available
-    function isTokenAvailable() {
-        const token = getToken();
-        return token !== null && token !== undefined && token !== '';
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const accessToken = getToken();
+        if (!accessToken) {
+            redirectToLogin(); // Redirect to login if token is not present
+            return;
+        }
 
-    // Function to redirect to login if token is not available
-    function redirectToLogin() {
-        console.log('Token not found. Redirecting to login.');
-        window.location.href = "/index";
-    }
+        let decodedToken;
+        try {
+            decodedToken = jwtJsDecode.decode(accessToken);
+        } catch (error) {
+            redirectToLogin(); // Redirect to login if token is invalid
+            return;
+        }
 
-    // Check if token is available and redirect if not
-    if (!isTokenAvailable()) {
-        redirectToLogin();
-    }
+        let usertype = decodedToken.payload.usertype;
+        if (usertype !== 'superadmin') {
+            logout(); // Logout if user is not superadmin
+            return;
+        }
+
+        function redirectToLogin() {
+            console.log('Token not found or invalid. Redirecting to login.');
+            window.location.href = "/index";
+        }
+
+        function logout() {
+            localStorage.removeItem('accessToken');
+            redirectToLogin();
+        }
+    });
 
     $(document).ready(function () {
+      const token = getToken();
         // Populate Program Code Dropdown
         $.ajax({
             url: baseUrl+"/courses/getcourse",

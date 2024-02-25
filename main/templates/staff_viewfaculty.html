@@ -11,7 +11,7 @@
 
 
 <body>
-{% include "navbar.html" %}
+{% include "staffnavbar.html" %}
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -21,8 +21,8 @@
           <div class="col">
             <div class="mb-1">
               <ol class="breadcrumb" aria-label="breadcrumbs">
-              <li class="breadcrumb-item"><a href="{% url 'view_schedule' %}">View Schedule</a></li>
-              <li class="breadcrumb-item"><a href="{% url 'view_faculty' %}">Faculty schedule</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'staffviewschedule' %}">View Schedule</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'staff_viewfaculty' %}">Faculty schedule</a></li>
               </ol>
             </div>
             <h2 class="page-title" style="margin-bottom: 20px;">
@@ -213,7 +213,7 @@
   $(document).ready(function () {
       // Populate Academic Year Dropdown
 $.ajax({
-  url: "http://127.0.0.1:8000/academicyears/getacadyr",
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
   type: 'GET',
   headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -234,7 +234,7 @@ $.ajax({
 
 // Populate Semester Dropdown
 $.ajax({
-  url: "http://127.0.0.1:8000/semesters/getsemester",
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
   type: 'GET',
   headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -467,19 +467,19 @@ pdf.text('POLYTECHNIC', 55, 207);
 
 
 $('#searchButton').on('click', function () {
-  // Get selected values and names from dropdowns
+  // mga other values
   const academicYearId = $('#academicyearDropdown option:selected').data('id');
   const academicYearName = $('#academicyearDropdown option:selected').text();
   const semesterId = $('#semesterDropdown option:selected').data('id');
   const semesterName = $('#semesterDropdown option:selected').text();
   const facultyName = $('#FacultyDropdown option:selected').text()
   
-  // Get faculty ID as value, not the full name
+  // eto yung method natin to get the facultyid
   const facultyId = $('#FacultyDropdown').val();
     
-        // Make a request to get filtered faculty loading data
+        // to request sa faculty
         $.ajax({
-            url: "http://127.0.0.1:8000/facultyloadings/filterfindfaculty",
+            url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/filterfindfaculty",
             type: 'GET',
             data: {
                 acadyear_id: academicYearId,

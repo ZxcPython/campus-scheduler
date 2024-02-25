@@ -404,7 +404,7 @@ function searchFaculty() {
 // Function to populate Program Dropdown
 function populateProgramDropdown() {
     $.ajax({
-        url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
+        url: "hhttps://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
@@ -740,6 +740,19 @@ function populateRoomDropdownOutsideTable() {
 
 // Call the function to populate the rmDropdown outside the table
 populateRoomDropdownOutsideTable();
+  // Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+  function showCautionAlert(message) {
+    Swal.fire({
+      icon: 'warning', // Change the icon to 'warning' for a caution icon
+      title: 'Missing input!',
+      html: message,
+      showCloseButton: false, // Hide the close button
+      showCancelButton: false, // Hide the cancel button
+      showConfirmButton: true, // Show the confirm button
+      confirmButtonText: 'Okay', // Text for the confirm button
+      confirmButtonColor: '#3085d6', // Customize confirm button color if needed
+    });
+  }
 
 // Search button click event handler
 $('#searchRoomButton').on('click', function () {
@@ -823,6 +836,7 @@ $('#searchRoomButton').on('click', function () {
       },
       error: function (xhr, status, error) {
           console.log('Error fetching room schedule data:', xhr.responseText);
+          showCautionAlert('Please fill the dropdowns for Academic year and Semester first');
       }
   });
 });

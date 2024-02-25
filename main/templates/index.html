@@ -16,6 +16,10 @@
     <link href="{% static 'css/tabler-payments.min.css' %}" rel="stylesheet" />
     <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet" />
     <link href="{% static 'css/demo.min.css' %}" rel="stylesheet" />
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <style>
         @import url('https://rsms.me/inter/inter.css');
@@ -50,19 +54,21 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="id_email" class="form-label">Email address</label>
-                            <input type="email" id="id_email" name="email" class="form-control" required>
+                            <input type="email" id="id_email" name="email" class="form-control" placeholder="Email" autocomplete="off" required>
                             <div id="emailError" class="text-danger"></div> <!-- Error message placeholder for email -->
                         </div>
-                        <div class="mb-2">
-                            <label for="id_password" class="form-label">Password</label>
-                            <div class="input-group input-group-flat mb-3">
-                                <input type="password" id="id_password" name="password" class="form-control" required>
-                                <span class="input-group-text toggle-password">
-                                    <!-- ... -->
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group input-group-flat">
+                                <input type="password" class="form-control" id="id_password" placeholder="Password" autocomplete="off" required>
+                                <span class="input-group-text toggle-password" style="cursor: pointer;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                        <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                    </svg>
                                 </span>
                             </div>
-                            <div id="passwordError" class="text-danger"></div> <!-- Error message placeholder for password -->
-                        </div>
                         <div class="form-footer mb-3">
                             <button type="submit" class="btn btn-primary w-100" id="signInButton">Sign in</button>
                         </div>
@@ -81,9 +87,18 @@
     <script>
         $(document).ready(function () {
             $(".toggle-password").click(function () {
-                // ... (password toggle code) ...
+                let passwordInput = $("#id_password");
+                let type = passwordInput.attr("type") === "password" ? "text" : "password";
+                passwordInput.attr("type", type);
             });
-
+            // Function to show SweetAlert error notification
+            function showErrorAlert(message) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Invalid',
+            text: message,
+             });
+           }
             $("form").submit(function (event) {
                 event.preventDefault();
                 $("#errorMessage").addClass('d-none');
@@ -92,12 +107,12 @@
                 let password = $("#id_password").val();
 
                 if (!isValidEmail(email)) {
-                    alert("Please enter a valid email address.");
+                    showErrorAlert("Please enter a valid email address.");
                     return;
                 }
 
                 if (!isValidPassword(password)) {
-                    alert("Password should be at least 8 characters long.");
+                    showErrorAlert("Password should be at least 8 characters long.");
                     return;
                 }
 
@@ -106,7 +121,7 @@
                 formData.append("password", password);
 
                 $.ajax({
-                    url: "https://schedulerserver-6e565d991c10.herokuapp.com/login/sign-in",
+                    url: baseUrl+"/login/sign-in",
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -142,9 +157,6 @@
                     }
                 });
             });
-
-            // Log the stored token when the page loads
-            console.log("Stored Token:", localStorage.getItem('accessToken'));
 
             if (localStorage.getItem('accessToken')) {
                 // If accessToken is present, the user is already logged in, redirect to home

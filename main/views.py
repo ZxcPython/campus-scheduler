@@ -9,14 +9,32 @@ def adminhome(request):
     return render(request, 'adminhome.html')
 def adminviewschedule(request):
     return render(request, 'adminviewschedule.html')
+def admin_viewfaculty(request):
+    return render(request, 'admin_viewfaculty.html')
+def admin_viewroom(request):
+    return render(request, 'admin_viewroom.html')
 def adminnavbar(request):
     return render(request, 'adminnavbar.html')
-def adminfacultyview(request):
-    return render(request, 'adminfacultyview.html')
+def superadminnavbar(request):
+    return render(request, 'superadminnavbar.html')
+def admin_managecourse(request):
+    return render(request, 'admin_managecourse.html')
+def admin_manageacadyear(request):
+    return render(request, 'admin_manageacadyear.html')
+def admin_manageyrlevel(request):
+    return render(request, 'admin_manageyrlevel.html')
+def admin_manageroom(request):
+    return render(request, 'admin_manageroom.html')
+def admin_managecuryr(request):
+    return render(request, 'admin_managecuryr.html')
+def admin_managesec(request):
+    return render(request, 'admin_managesec.html')
+def admin_manageclass(request):
+    return render(request, 'admin_manageclass.html')
+def admin_managesem(request):
+    return render(request, 'admin_managesem.html')
 def adminmanageschedule(request):
     return render(request, 'adminmanageschedule.html')
-def adminviewroom(request):
-    return render(request, 'adminviewroom.html')
 def admincurriculumview(request):
     return render(request, 'admincurriculumview.html')
 def adminfacultyloading(request):
@@ -45,6 +63,10 @@ def staffcurriculumview(request):
     return render(request, 'staffcurriculumview.html')
 def staffviewclass(request):
     return render(request, 'staffviewclass.html')
+def staff_viewfaculty(request):
+    return render(request, 'staff_viewfaculty.html')
+def staff_viewroom(request):
+    return render(request, 'staff_viewroom.html')
 def staffviewschedule(request):
     return render(request, 'staffviewschedule.html')
 def faculty_loading(request):

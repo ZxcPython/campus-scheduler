@@ -5,6 +5,7 @@
 <link href="{% static 'css/tabler-payments.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <body>
 {% include "navbar.html" %}
@@ -23,6 +24,37 @@
             Dashboard
           </h2>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-xl">
+    <div class="row justify-content-start">
+      <div class="col-12 col-md-4"> <!-- Adjust the column size as needed -->
+        <h3 class="font-weight-bold">Number of Faculty members based on Rank</h3>
+        <div id="donutChart"></div> <!-- Adjust height as needed -->
+      </div>
+      <div class="col-12 col-md-4"> <!-- Adjust the column size as needed -->
+        <h3 class="font-weight-bold">Percentage of Faculty members based on faculty type</h3>
+        <div id="facultyTypeChart"></div> <!-- Adjust height as needed -->
+      </div>
+      <div class="col-12 col-md-4"> <!-- Adjust the column size as needed -->
+        <h3 class="font-weight-bold">Classroom occupancy chart (Per S.Y/Sem)</h3>
+        <div class="row align-items-center"> <!-- New row for dropdowns and button -->
+          <div class="col-md-5"> <!-- Adjust the column size as needed -->
+            <select id="academicyearDropdown" class="form-select">
+              <!-- Academic year options will be populated dynamically -->
+            </select>
+          </div>
+          <div class="col-md-5"> <!-- Adjust the column size as needed -->
+            <select id="semesterDropdown" class="form-select">
+              <!-- Semester options will be populated dynamically -->
+            </select>
+          </div>
+          <div class="col-md-2"> <!-- Adjust the column size as needed -->
+            <button id="filterButton" class="btn btn-primary btn-medium">Filter</button>
+          </div>
+        </div>
+        <div id="roomPieChart"></div> <!-- Adjust height as needed -->
       </div>
     </div>
   </div>
@@ -65,6 +97,7 @@
                       <div class="font-weight-medium">
                         Academic Year
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalAcadyear"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -85,6 +118,7 @@
                       <div class="font-weight-medium">
                         Manage Semester
                       </div>
+                    <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalSemesters"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -105,6 +139,7 @@
                       <div class="font-weight-medium">
                         View Courses
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalCourses"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -125,6 +160,7 @@
                       <div class="font-weight-medium">
                         View Year Level
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totaYearlevels"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -150,6 +186,7 @@
                       <div class="font-weight-medium">
                         View Section
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalSection"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -171,6 +208,7 @@
                       <div class="font-weight-medium">
                         View Class
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalClass"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -191,6 +229,7 @@
                       <div class="font-weight-medium">
                         View Curriculum Year
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalCuryear"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -212,6 +251,7 @@
                       <div class="font-weight-medium">
                         View Facility
                       </div>
+                      <div class="font-weight-bold" style="color: gray; opacity: 0.7;">Total: <span id="totalFacility"></span></div> 
                     </div>
                   </div>
                 </div>
@@ -222,7 +262,6 @@
       </div>
 
       <div class="row row-cards mt-2">
-    
             
         <div class="col-md-8">
           <div class="card mb-2">
@@ -235,7 +274,7 @@
                 </div>
                 <div class="col">
                   <h4 class="card-title m-0">
-                    <a href="#">View Class Schedule</a>
+                    <a href="{% url 'view_class' %}">View Class Schedule</a>
                   </h4>
                   <div class="text-secondary">
                   Effortlessly see the schedule of Classes
@@ -249,6 +288,7 @@
               </div>
             </div>
           </div>
+          
         
 
           <div class="card mb-2">
@@ -261,7 +301,7 @@
                 </div>
                 <div class="col">
                   <h4 class="card-title m-0">
-                    <a href="#">View Faculty Schedule</a>
+                    <a href="{% url 'view_faculty' %}">View Faculty Schedule</a>
                   </h4>
                   <div class="text-secondary">
                   Effortlessly see the schedule of Faculty
@@ -275,7 +315,6 @@
               </div>
             </div>
           </div>
-        
 
           <div class="card mb-2">
             <div class="card-body">
@@ -287,7 +326,7 @@
                 </div>
                 <div class="col">
                   <h4 class="card-title m-0">
-                    <a href="#">View Facility Schedule</a>
+                    <a href="{% url 'view_room' %}">View Facility Schedule</a>
                   </h4>
                   <div class="text-secondary">
                   Effortlessly see the schedule of Facility
@@ -304,6 +343,7 @@
             
           </div>
         
+    
           
         </div>
 
@@ -346,9 +386,15 @@
 </div>
 <script src="{% static 'js/tabler.min.js' %}" defer></script>
 <script src="{% static 'js/demo.min.js' %}" defer></script>
-<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/common.js' %}" defer></script>
+<script src="{% static 'js/fisconfig.js' %}" defer></script>
 <script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
-<script>
+<script>  
+  function getToken() {
+      return localStorage.getItem('accessToken');
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
       const accessToken = localStorage.getItem('accessToken');
 
@@ -368,12 +414,504 @@
       if (usertype !== 'superadmin') {
           logout(); 
       }
+      // Function to fetch data from the API
+function fetchData() {
+  var headers = {
+      'Authorization': 'API-Key',
+      'token': fistoken
+  };
+
+  return $.ajax({
+      url: 'https://pupqcfis-com.onrender.com/api/all/FISFaculty',
+      type: 'GET',
+      headers: headers,
+  });
+}
+
+// Function to render the pie chart with data fetched from the API
+function renderPieChart(data) {
+  // Initialize an object to store counts for each Rank
+  var rankCounts = {};
+
+  for (var key in data.Faculties) {
+    if (data.Faculties.hasOwnProperty(key)) {
+      var rank = data.Faculties[key].Rank;
+
+      // Count occurrences of each rank
+      if (rankCounts[rank]) {
+        rankCounts[rank]++;
+      } else {
+        rankCounts[rank] = 1;
+      }
+    }
+  }
+
+  // Convert counts to an array of values
+  var counts = Object.keys(rankCounts).map(function(rank) {
+    return rankCounts[rank];
   });
 
-  function logout() {
-      localStorage.removeItem('accessToken');
-      window.location.href = "/index";
+  // Configure the options for the pie chart
+  var options = {
+    series: counts,
+    chart: {
+      width: '440px', // Set width to 100% to make the chart fill its container
+      height: '500px', // Adjust height as needed
+      type: 'pie',
+    },
+    labels: Object.keys(rankCounts),
+    dataLabels: {
+      enabled: true,
+      formatter: function(val, opts) {
+        return counts[opts.seriesIndex].toFixed(0); // Return the count based on the series index
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200 // Adjust width for smaller screens if needed
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
+  };
+
+  // Render the chart
+  var chart = new ApexCharts(document.querySelector("#donutChart"), options);
+  chart.render();
+}
+
+// Fetch data from the API and render the pie chart
+fetchData()
+  .then(function(data) {
+      renderPieChart(data);
+  })
+  .catch(function(error) {
+      console.log('Error:', error);
+  });
+
+  // Function to render the pie chart with data fetched from the API
+function renderFacultyTypePieChart(data) {
+  // Initialize an object to store counts for each Rank
+  var facultyTypeCounts = {};
+
+  for (var key in data.Faculties) {
+    if (data.Faculties.hasOwnProperty(key)) {
+      var facultytype = data.Faculties[key].FacultyType;
+
+      // Count occurrences of each rank
+      if (facultyTypeCounts[facultytype]) {
+        facultyTypeCounts[facultytype]++;
+      } else {
+        facultyTypeCounts[facultytype] = 1;
+      }
+    }
   }
+
+  // Convert counts to percentages
+  var totalCount = Object.values(facultyTypeCounts).reduce((acc, val) => acc + val, 0);
+  var percentages = Object.values(facultyTypeCounts).map(count => ((count / totalCount) * 100).toFixed(2) + '%');
+
+  // Configure the options for the pie chart
+  var options = {
+    series: Object.values(facultyTypeCounts),
+    chart: {
+      width: '370px', // Set width to 100% to make the chart fill its container
+      type: 'pie',
+    },
+    labels: Object.keys(facultyTypeCounts),
+    dataLabels: {
+      enabled: true,
+      formatter: function(val, opts) {
+        return percentages[opts.seriesIndex];
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200 // Adjust width for smaller screens if needed
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
+  };
+
+  // Render the chart
+  var chart = new ApexCharts(document.querySelector("#facultyTypeChart"), options);
+  chart.render();
+}
+// Fetch data from the API and render the pie chart
+fetchData()
+  .then(function(data) {
+    renderFacultyTypePieChart(data);
+  })
+  .catch(function(error) {
+      console.log('Error:', error);
+  });
+
+  const token = getToken();
+
+  // Function to fetch room details from the API
+  function fetchRoomDetails(roomId) {
+    return $.ajax({
+      url: baseUrl + '/rooms/' + roomId,
+      type: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+  }
+  
+  // Function to fetch data from the API based on academic year and semester
+  function fetchRoomScheduleData(academicYearId, semesterId) {
+    return $.ajax({
+      url: baseUrl + `/manageschedules/roompiechart?acadyear_id=${academicYearId}&semester_id=${semesterId}`,
+      type: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+  }
+  
+  // Function to render the pie chart with data fetched from the API
+  function renderRoomPieChart(data) {
+    console.log('Received data:', data);
+  
+    // Initialize an object to store counts for each room_number
+    const roomCounts = {};
+  
+    // Iterate over the data and count occurrences of each room_id
+    data.forEach(({ room_id }) => {
+      roomCounts[room_id] = (roomCounts[room_id] || 0) + 1;
+    });
+  
+    console.log('Room counts:', roomCounts);
+  
+    // Fetch room details and update the frontend with room_number
+    const promises = Object.keys(roomCounts).map(roomId =>
+      fetchRoomDetails(roomId)
+        .then(({ data }) => {
+          roomCounts[data.room_number] = roomCounts[roomId];
+          delete roomCounts[roomId];
+        })
+        .catch(error => {
+          console.error('Error fetching room details:', error);
+        })
+    );
+  
+    // Wait for all promises to resolve
+    Promise.all(promises)
+      .then(() => {
+        // Convert counts to an array of values
+        const counts = Object.values(roomCounts);
+  
+        // Configure the options for the pie chart
+        const options = {
+          series: counts,
+          chart: {
+            width: '350',
+            height: '300px',
+            type: 'pie',
+          },
+          labels: Object.keys(roomCounts),
+          dataLabels: {
+            enabled: true,
+            formatter: (val, opts) => counts[opts.seriesIndex].toFixed(0),
+          },
+          responsive: [{
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: 'bottom',
+              },
+            },
+          }],
+        };
+  
+        // Render the chart
+        const chart = new ApexCharts(document.querySelector("#roomPieChart"), options);
+        chart.render();
+      })
+      .catch(error => {
+        console.error('Error rendering chart:', error);
+      });
+  }
+  
+  // Event listener for filter button click event
+  $('#filterButton').click(function() {
+    const acadYearId = $("#academicyearDropdown").val();
+    const semesterId = $("#semesterDropdown").val();
+  
+    if (!acadYearId || !semesterId) {
+      console.log('Academic year and semester are required.');
+      return;
+    }
+  
+    // Display loading indicator
+    $('#roomPieChart').html('<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>');
+  
+    fetchRoomScheduleData(acadYearId, semesterId)
+      .then(response => {
+        console.log('Fetch data success:', response);
+        if (response && response.length > 0) {
+          renderRoomPieChart(response);
+        } else {
+          console.log('No data received.');
+          // Clear chart container
+          $('#roomPieChart').empty().html('<p>No data available</p>');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        // Clear chart container
+        $('#roomPieChart').empty().html('<p>Error fetching data</p>');
+      });
+  });
+  
+  // Function to populate the academic year dropdown
+  function populateAcademicYearDropdown() {
+    $.ajax({
+      url: baseUrl + '/academicyears/getacadyr',
+      type: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: function(response) {
+        if (response.data && response.data.length > 0) {
+          response.data.forEach(academicYear => {
+            $('#academicyearDropdown').append(`<option value="${academicYear.id}">${academicYear.name}</option>`);
+          });
+        } else {
+          console.log('No academic years found.');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log('Error fetching academic years:', xhr.responseText);
+      }
+    });
+  }
+  
+  // Function to populate the semester dropdown
+  function populateSemesterDropdown() {
+    $.ajax({
+      url: baseUrl + '/semesters/getsemester',
+      type: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: function(response) {
+        if (response.data && response.data.length > 0) {
+          response.data.forEach(semester => {
+            $('#semesterDropdown').append(`<option value="${semester.id}">${semester.name}</option>`);
+          });
+        } else {
+          console.log('No semesters found.');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log('Error fetching semesters:', xhr.responseText);
+      }
+    });
+  }
+  
+  // Initial function calls to populate dropdowns
+  populateAcademicYearDropdown();
+  populateSemesterDropdown();
+      // Function to update the total semesters count
+      function updateTotalSemestersCount(count) {
+          $('#totalSemesters').text(count);
+      }
+
+      function refreshSemesterCount() {
+          const token = getToken();
+          $.ajax({
+              url: baseUrl + '/semesters/getsemester', // Adjust the endpoint
+              type: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              },
+              success: function(data) {
+                  updateTotalSemestersCount(data.data.length);
+                   // Update total semesters count
+              },
+              error: function(xhr, status, error) {
+                  console.log('Error:', xhr.responseText);
+              }
+          });
+      }
+
+      // Call refreshSemesterCount when the page loads
+      refreshSemesterCount();
+
+      // Function to update the total semesters count
+      function updateAcadYearCount(count) {
+        $('#totalAcadyear').text(count);
+    }
+
+    function refreshAcadYearCount() {
+        const token = getToken();
+        $.ajax({
+            url: baseUrl + '/academicyears/getacadyr', // Adjust the endpoint
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(data) {
+                updateAcadYearCount(data.data.length); // Update total semesters count
+            },
+            error: function(xhr, status, error) {
+                console.log('Error:', xhr.responseText);
+            }
+        });
+    }
+    refreshAcadYearCount();
+
+    function updateCourseCount(count) {
+      $('#totalCourses').text(count);
+  }
+
+  function refreshCourseCount() {
+      const token = getToken();
+      $.ajax({
+          url: baseUrl + '/courses/getcourse', // Adjust the endpoint
+          type: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`
+          },
+          success: function(data) {
+            updateCourseCount(data.data.length); // Update total semesters count
+          },
+          error: function(xhr, status, error) {
+              console.log('Error:', xhr.responseText);
+          }
+      });
+  }
+  refreshCourseCount();
+
+  function updateYearLevelCount(count) {
+    $('#totaYearlevels').text(count);
+}
+
+function refreshYearLevelCount() {
+    const token = getToken();
+    $.ajax({
+        url: baseUrl + '/yearlevels/getyearlevels', // Adjust the endpoint
+        type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        success: function(data) {
+          updateYearLevelCount(data.data.length); // Update total semesters count
+        },
+        error: function(xhr, status, error) {
+            console.log('Error:', xhr.responseText);
+        }
+    });
+}
+refreshYearLevelCount();
+
+function updateClassCount(count) {
+  $('#totalClass').text(count);
+}
+
+function refreshClassCount() {
+  const token = getToken();
+  $.ajax({
+      url: baseUrl + '/classes/getclass', // Adjust the endpoint
+      type: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`
+      },
+      success: function(data) {
+        updateClassCount(data.data.length); // Update total semesters count
+      },
+      error: function(xhr, status, error) {
+          console.log('Error:', xhr.responseText);
+      }
+  });
+}
+refreshClassCount();
+
+function updateSectionCount(count) {
+  $('#totalSection').text(count);
+}
+
+function refreshSectionCount() {
+  const token = getToken();
+  $.ajax({
+      url: baseUrl + '/sections/getsection', // Adjust the endpoint
+      type: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`
+      },
+      success: function(data) {
+        updateSectionCount(data.data.length); // Update total semesters count
+      },
+      error: function(xhr, status, error) {
+          console.log('Error:', xhr.responseText);
+      }
+  });
+}
+refreshSectionCount();
+
+function updateCurYearCount(count) {
+  $('#totalCuryear').text(count);
+}
+
+function refreshCurYearCount() {
+  const token = getToken();
+  $.ajax({
+      url: baseUrl + '/managecurriculums/getcurnames', // Adjust the endpoint
+      type: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`
+      },
+      success: function(data) {
+        updateCurYearCount(data.data.length); // Update total semesters count
+      },
+      error: function(xhr, status, error) {
+          console.log('Error:', xhr.responseText);
+      }
+  });
+}
+refreshCurYearCount();
+
+function updateRoomCount(count) {
+  $('#totalFacility').text(count);
+}
+
+function refreshRoomCount() {
+  const token = getToken();
+  $.ajax({
+      url: baseUrl + '/rooms/getrooms', // Adjust the endpoint
+      type: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`
+      },
+      success: function(data) {
+        updateRoomCount(data.data.length); // Update total semesters count
+      },
+      error: function(xhr, status, error) {
+          console.log('Error:', xhr.responseText);
+      }
+  });
+}
+refreshRoomCount();
+
+      function logout() {
+          localStorage.removeItem('accessToken');
+          window.location.href = "/index";
+      }
+  });
 </script>
 </body>
 </html>

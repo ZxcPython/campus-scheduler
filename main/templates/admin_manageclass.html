@@ -7,7 +7,7 @@
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
 
 <body>
-{% include "navbar.html" %}
+{% include "adminnavbar.html" %}
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -23,8 +23,8 @@
                         <div class="col">
                             <div class="mb-1">
                                 <ol class="breadcrumb" aria-label="breadcrumbs">
-                                    <li class="breadcrumb-item"><a href="/system_configuration/">System Configurations</a></li>
-                                    <li class="breadcrumb-item"><a href="/manage_class/">Manage Class</a></li>
+                                    <li class="breadcrumb-item"><a href="/adminsystemconfig/">System Configurations</a></li>
+                                    <li class="breadcrumb-item"><a href="/admin_manageclass/">Manage Class</a></li>
                                 </ol>
                             </div>
                             <h2 class="page-title">
@@ -140,36 +140,11 @@
     <!-- Additional Scripts-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/common.js' %}" defer></script>
-    <script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            window.location.href = "/index";
-        }
-
-        let decodedToken;
-        try {
-            decodedToken = jwtJsDecode.decode(accessToken);
-        } catch (error) {
-            window.location.href = "/index";
-        }
-
-        let usertype = decodedToken.payload.usertype;
-        if (usertype !== 'superadmin') {
-            logout(); // Assuming you have a logout function to handle this
-        }
-    });
-
-    function getToken() {
+    <script>
+      // Function to get the access token from localStorage
+      function getToken() {
         return localStorage.getItem('accessToken');
-    }
-
-    function logout() {
-        // Clear local storage and redirect to login page
-        localStorage.removeItem('accessToken');
-        window.location.href = "/index";
-    }
+      }
     
       // Function to populate the program dropdown
       function populateProgramDropdown(token) {

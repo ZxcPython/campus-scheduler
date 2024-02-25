@@ -37,6 +37,8 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/fisconfig.js' %}" defer></script>
+    <script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
     <script>
         //always import the jquery para magamit natin ang ajax jquery, para ito sa mga gagamit ng api, pero pwede rin namang axios etc
         $(document).ready(function() {
@@ -61,11 +63,39 @@
                 }
                 // yung faculty.faculty type, ayan yung mga gusto ko lang kunin na fields and data, para di lahat makuha ko
             }
-
+    
             function refreshFacultyInfoTable() {
+                // Check if user is logged in and has correct usertype
+                const accessToken = localStorage.getItem('accessToken');
+                if (!accessToken) {
+                    window.location.href = "/index";
+                    return;
+                }
+    
+                let decodedToken;
+                try {
+                    decodedToken = jwtJsDecode.decode(accessToken);
+                } catch (error) {
+                    window.location.href = "/index";
+                    return;
+                }
+    
+                let usertype = decodedToken.payload.usertype;
+                if (usertype !== 'superadmin') {
+                    logout(); // Assuming you have a logout function to handle this
+                    return;
+                }
+    
+                // Set up the request headers
+                var headers = {
+                    'Authorization': 'API-Key',
+                    'token': fistoken
+                };
+            
                 $.ajax({
                     url: 'https://pupqcfis-com.onrender.com/api/all/FISFaculty',
                     type: 'GET',
+                    headers: headers, // Include the headers in the request
                     success: function(data) {
                         displayFacultyInfoTable(data);
                     },
@@ -74,9 +104,9 @@
                     }
                 });
             }
-
+            
             refreshFacultyInfoTable();
         });
-    </script>
+    </script>    
 </body>
 </html>

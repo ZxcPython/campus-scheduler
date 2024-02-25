@@ -6,11 +6,16 @@
 <link href="{% static 'css/tabler-vendors.min.css' %}" rel="stylesheet"/>
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 
 <body>
-{% include "adminnavbar.html" %}
+  {% include "adminnavbar.html" %}
 
-<script src="./dist/js/demo-theme.min.js?1692870487"></script>
+  <script src="./dist/js/demo-theme.min.js?1692870487"></script>
   <div class="page-wrapper">
     <!-- Page header -->
     <div class="page-header d-print-none">
@@ -108,6 +113,39 @@
                             <path d="M12 12l0 .01" />
                             <path d="M3 13a20 20 0 0 0 18 0" />
                           </svg>
+                          <strong>Total Units:</strong>
+                          <span id="totalunits">0</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>TS:</strong>
+                          <span id="ts">0</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
+                          <strong>Total hrs per week:</strong>
+                          <span id="hrsperweek">0</span>
+                        </div>
+                        <div class="mb-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                            <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M12 12l0 .01" />
+                            <path d="M3 13a20 20 0 0 0 18 0" />
+                          </svg>
                           <strong>Preferred Schedule:</strong>
                           <span id="preferredSchedule">Not Set</span>
                         </div>
@@ -132,12 +170,15 @@
                                   <thead>
                                     <tr>
                                       <th>Course Code</th>
-                                      <th>Course Name</th>
+                                      <th>Course Description</th>
                                       <th>Units</th>
-                                      <th>Lecture</th>
-                                      <th>Lab</th>
+                                      <th>Lec hours</th>
+                                      <th>Lab hours</th>
+                                      <th>Tuition hours</th>
                                       <th>Class</th>
-                                      <th>Schedule</th>
+                                      <th>Day</th>
+                                      <th>Start Time</th>
+                                      <th>End Time</th>
                                       <th>Room</th>
                                       <th class="w-1">Action</th>
                                     </tr>
@@ -195,6 +236,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
   <script src="{% static 'js/common.js' %}" defer></script>
+  <script src="{% static 'js/fisconfig.js' %}" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
         if (!localStorage.getItem('accessToken')) {
@@ -210,11 +252,18 @@
     $(document).ready(function () {
         const token = getToken();
 
+         // Set up the request headers
+         var headers = {
+          'Authorization': 'API-Key',
+          'token': fistoken
+      };
+
         // Function to fetch faculties and populate Select2 dropdown
         function fetchFaculties() {
             $.ajax({
                 url: "https://pupqcfis-com.onrender.com/api/all/FISFaculty",
                 type: "GET",
+                headers: headers,
                 success: function (response) {
                     // Populate the dropdown with faculty names and last names
                     const facultyDropdown = $("#facultyDropdown");
@@ -249,7 +298,7 @@
         // Function to populate academic year dropdown
         function populateAcademicYearDropdown() {
             $.ajax({
-                url:"https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
+                url: baseUrl+"/academicyears/getacadyr",
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -272,7 +321,7 @@
         // Function to populate semester dropdown
         function populateSemesterDropdown() {
             $.ajax({
-                url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
+                url: baseUrl+"/semesters/getsemester",
                 type: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -314,34 +363,37 @@ function searchSchedule() {
 
   // Make an AJAX request to the FastAPI endpoint
   $.ajax({
-    url: `https://schedulerserver-6e565d991c10.herokuapp.com/manageschedules/filtersched-by-subject-code`,
-    type: "GET",
-    data: {
-      acadyear_id: acadYearId,
-      semester_id: semesterId,
-      subject_code: subjectCode
-    },
-    success: function (response) {
-      // Check if there are results
-      if (response && response.length > 0) {
-        // Iterate over the schedule results and create cards
-        response.forEach(function (schedule) {
-          // Make separate requests to get class and room details based on IDs
-          const classRequest = $.ajax({
-            type: "GET",
-            url: `https://schedulerserver-6e565d991c10.herokuapp.com/classes/${schedule.class_id}`,
-            headers: {
-              'Authorization': `Bearer ${getToken()}`
-            },
-          });
+      url: baseUrl + `/manageschedules/filtersched-by-subject-code`,
+      type: "GET",
+      data: {
+          acadyear_id: acadYearId,
+          semester_id: semesterId,
+          subject_code: subjectCode
+      },
+      headers: {
+          'Authorization': `Bearer ${token}`
+      },
+      success: function (response) {
+          // Check if there are results
+          if (response && response.length > 0) {
+              // Iterate over the schedule results and create cards
+              response.forEach(function (schedule) {
+                  // Make separate requests to get class and room details based on IDs
+                  const classRequest = $.ajax({
+                      type: "GET",
+                      url: baseUrl + `/classes/${schedule.class_id}`,
+                      headers: {
+                          'Authorization': `Bearer ${token}`
+                      },
+                  });
 
-          const roomRequest = $.ajax({
-            type: "GET",
-            url: `https://schedulerserver-6e565d991c10.herokuapp.com/rooms/${schedule.room_id}`,
-            headers: {
-              'Authorization': `Bearer ${getToken()}`
-            },
-          });
+                  const roomRequest = $.ajax({
+                      type: "GET",
+                      url: baseUrl + `/rooms/${schedule.room_id}`,
+                      headers: {
+                          'Authorization': `Bearer ${token}`
+                      },
+                  });
 
           // Store the promises in arrays
           classDetailsArray.push(classRequest);
@@ -372,13 +424,15 @@ function searchSchedule() {
                     <h5 class="card-title">${schedule.subject_code}</h5>
                     <p class="card-text">
                       <strong>Description:</strong> ${schedule.subject_name}<br>
-                      <strong>Lecture Hours:</strong> ${schedule.lecture_hours || 'N/A'}<br>
-                      <strong>Lab Hours:</strong> ${schedule.lab_hours || 'N/A'}<br>
+                      <strong>Lecture Hours:</strong> ${schedule.lecture_hours || '0'}<br>
+                      <strong>Lab Hours:</strong> ${schedule.lab_hours || '0'}<br>
                       <strong>Units:</strong> ${schedule.units}<br>
-                      <strong>Class:</strong> ${classDetail.classname || 'N/A'}<br>
+                      <strong>Tuition Hours:</strong> ${schedule.tuition_hours}<br>
+                      <strong>Class:</strong> ${classDetail.classname || 'Not set'}<br>
                       <strong>Day:</strong> ${schedule.day}<br>
-                      <strong>Schedule:</strong> ${formattedTime.startTime} - ${formattedTime.endTime}<br>
-                      <strong>Room:</strong> ${roomDetail.room_number || 'N/A'}
+                      <strong>Start Time:</strong> ${formattedTime.startTime}<br>
+                      <strong>End Time:</strong> ${formattedTime.endTime}<br>
+                      <strong>Room:</strong> ${roomDetail.room_number || '0'}
                     </p>
                     <button class="btn btn-primary assignButton" data-schedule-index="${index}">Assign</button>
                   </div>
@@ -402,12 +456,14 @@ function searchSchedule() {
               subject_code: clickedSchedule.subject_code,
               subject_name: clickedSchedule.subject_name,
               units: clickedSchedule.units,
-              lecture_hours: clickedSchedule.lecture_hours || 'N/A',
-              lab_hours: clickedSchedule.lab_hours || 'N/A',
-              class_name: classDetails[clickedScheduleIndex].classname || 'N/A',
+              lecture_hours: clickedSchedule.lecture_hours || '0',
+              lab_hours: clickedSchedule.lab_hours || '0',
+              tuition_hours: clickedSchedule.tuition_hours || '0',
+              class_name: classDetails[clickedScheduleIndex].classname || '0',
               day: clickedSchedule.day,
-              schedule: `${formattedTimeArray[clickedScheduleIndex].startTime} - ${formattedTimeArray[clickedScheduleIndex].endTime}`,
-              room: roomDetails[clickedScheduleIndex].room_number || 'N/A'
+              start_time: `${formattedTimeArray[clickedScheduleIndex].startTime}`,
+              end_time: `${formattedTimeArray[clickedScheduleIndex].endTime}`,
+              room: roomDetails[clickedScheduleIndex].room_number || '0'
             };
 
             // Append the assigned schedule to the Course Load table
@@ -428,18 +484,21 @@ function searchSchedule() {
   });
 }
 
-// Function to append assigned schedule to the Course Load table
+// Function to add a new row to the Course Load table
 function addToCourseLoadTable(assignedSchedule) {
-  // Format the schedule data and append it to the Course Load table
+  // Append a new row, even if the subject code is already in the table
   const rowHtml = `
-    <tr>
+    <tr data-subject-code="${assignedSchedule.subject_code}" data-units="${assignedSchedule.units}" data-tuition-hours="${assignedSchedule.tuition_hours}" data-class-name="${assignedSchedule.class_name}">
       <td>${assignedSchedule.subject_code}</td>
       <td>${assignedSchedule.subject_name}</td>
       <td>${assignedSchedule.units}</td>
       <td>${assignedSchedule.lecture_hours}</td>
       <td>${assignedSchedule.lab_hours}</td>
+      <td>${assignedSchedule.tuition_hours}</td>
       <td>${assignedSchedule.class_name}</td>
-      <td>${assignedSchedule.day} ${assignedSchedule.schedule}</td>
+      <td>${assignedSchedule.day}</td>
+      <td>${assignedSchedule.start_time}</td>
+      <td>${assignedSchedule.end_time}</td>
       <td>${assignedSchedule.room}</td>
       <td><button class="btn btn-danger btn-sm removeButton">Remove</button></td>
     </tr>
@@ -449,11 +508,105 @@ function addToCourseLoadTable(assignedSchedule) {
   $("#courseLoadBody").append(rowHtml);
 
   // Add a click event listener for the Remove button
-  $(".removeButton").on("click", function () {
+  $(".removeButton").off().on("click", function () {
     // Remove the assigned schedule from the Course Load table
+    const removedSubjectCode = $(this).closest('tr').data("subject-code");
     $(this).closest('tr').remove();
+
+    // Update total units, TS, and Hrs per Week after removal
+    updateTotalUnitsAndTS();
+  });
+
+  // Update total units, TS, and Hrs per Week
+  updateTotalUnitsAndTS();
+}
+function calculateTotalUnits() {
+  // Create an object to store the unique combinations of subject codes and class names
+  const uniqueSubjectClasses = {};
+
+  // Iterate through rows in the table
+  $("#courseLoadBody tr").each(function () {
+    const subjectCode = $(this).data("subject-code");
+    const className = $(this).data("class-name");
+    const units = parseInt($(this).data("units")) || 0;
+
+    // Combine subject code and class name to create a unique key
+    const key = `${subjectCode}-${className}`;
+
+    // If the key is not in the object, initialize it with units, otherwise, add units
+    if (!(key in uniqueSubjectClasses)) {
+      uniqueSubjectClasses[key] = units;
+    }
+  });
+
+  // Calculate the total units
+  const newTotalUnits = Object.values(uniqueSubjectClasses).reduce((sum, units) => sum + units, 0);
+  return newTotalUnits;
+}
+
+function calculateTotalHrsPerWeek() {
+  // Create an object to store the unique combinations of subject codes and class names
+  const uniqueSubjectClasses = {};
+
+  // Iterate through rows in the table
+  $("#courseLoadBody tr").each(function () {
+    const subjectCode = $(this).data("subject-code");
+    const className = $(this).data("class-name");
+    const tuitionHours = parseInt($(this).data("tuition-hours")) || 0;
+
+    // Combine subject code and class name to create a unique key
+    const key = `${subjectCode}-${className}`;
+
+    // If the key is not in the object, initialize it with tuition hours, otherwise, add tuition hours
+    if (!(key in uniqueSubjectClasses)) {
+      uniqueSubjectClasses[key] = tuitionHours;
+    }
+  });
+
+  // Calculate the total tuition hours
+  const totalHrsPerWeek = Object.values(uniqueSubjectClasses).reduce((sum, tuitionHours) => sum + tuitionHours, 0);
+  return totalHrsPerWeek;
+}
+// Function to show SweetAlert caution notification with a caution icon and a single "Okay" button
+function showCautionAlert(message) {
+  Swal.fire({
+    icon: 'warning', // Change the icon to 'warning' for a caution icon
+    title: 'Warning',
+    html: message,
+    showCloseButton: false, // Hide the close button
+    showCancelButton: false, // Hide the cancel button
+    showConfirmButton: true, // Show the confirm button
+    confirmButtonText: 'Okay', // Text for the confirm button
+    confirmButtonColor: '#3085d6', // Customize confirm button color if needed
   });
 }
+
+function updateTotalUnitsAndTS() {
+  const totalUnits = calculateTotalUnits();
+  const allowedUnits = parseInt($("#unitsAllowed").text()) || 0;
+  const TS = parseInt($("#ts").text()) || 0;
+
+  // Update total units only for the original rows
+  $("#totalunits").text(totalUnits);
+
+  // Check if total units exceed the allowed units
+  if (totalUnits > allowedUnits) {
+    // Notify the user
+    showCautionAlert("You're assigning schedules more than the faculty's allowed units!");
+
+    // Update TS
+    const ts = totalUnits - allowedUnits;
+    $("#ts").text(ts);
+  }
+    // Calculate TS based on the difference between total units and allowed units
+    const ts = Math.max(totalUnits - allowedUnits, 0);
+    $("#ts").text(ts);
+
+  // Update Hrs per Week
+  const totalHrsPerWeek = calculateTotalHrsPerWeek();
+  $("#hrsperweek").text(totalHrsPerWeek);
+}
+
 
 // Assign the searchSchedule function to the button click event
 $("#scheduleSearchButton").on("click", function () {
@@ -465,13 +618,17 @@ function formatTime(time) {
   const formattedTime = new Date(`1970-01-01T${time}`);
   return formattedTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
-
         function searchFaculty() {
             const facultyId = $("#facultyDropdown").val();
+            var headers = {
+              'Authorization': 'API-Key',
+              'token': fistoken
+          };
 
             $.ajax({
                 url: `https://pupqcfis-com.onrender.com/api/FISFaculty/${facultyId}`,
                 type: "GET",
+                headers: headers,
                 success: function (response) {
                     // Update the UI with faculty details
                     $("#facultyName").text(`${response.Faculties.FirstName} ${response.Faculties.LastName}`);
@@ -481,6 +638,7 @@ function formatTime(time) {
                     $("#unitsAllowed").text(response.Faculties.Units);
                     $("#preferredSchedule").text(response.Faculties.PreferredSchedule);
                     $("#Specialization").text(response.Faculties.Specialization);
+                    
                     // Add more lines to update other details as needed
                 },
                 error: function (xhr, status, error) {
@@ -488,65 +646,108 @@ function formatTime(time) {
                 }
             });
         }
-        // Function to submit course load data
+
+
+// Function to show SweetAlert success notification
+function showSuccessAlert(message) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: message,
+  });
+}
+
+// Function to show SweetAlert error notification
+function showErrorAlert(message) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: message,
+  });
+}       
+// Function to submit course load data
 function submitCourseLoad() {
   // 1. Capture the selected academic year and semester from the dropdowns
   const acadYearId = $("#acadyearDropdown").val();
   const semesterId = $("#semesterDropdown").val();
+  const facultyId = $("#facultyDropdown").val();
 
   // 2. Capture the faculty details (name, type, rank)
-  const facultyName = $("#facultyName").text();
   const facultyType = $("#facultyType").text();
   const rank = $("#rank").text();
+  const TotalUnits = $("#totalunits").text();
+  const Ts = $("#ts").text();
+  const totalHours = $("#hrsperweek").text();
 
   // 3. Capture the course load data from the table rows
   const courseLoadData = [];
   $("#courseLoadBody tr").each(function () {
+
       const rowData = {
           acadyear_id: acadYearId,
           semester_id: semesterId,
-          facultyname: facultyName,
+          facultyid: facultyId,
           facultystatus: facultyType,
+          totalunits: TotalUnits,
+          totalhours: totalHours,
+          ts: Ts,
           rank: rank,
           course_code: $(this).find("td:eq(0)").text(),
           course_description: $(this).find("td:eq(1)").text(),
           units: $(this).find("td:eq(2)").text(),
           lec: $(this).find("td:eq(3)").text(),
           lab: $(this).find("td:eq(4)").text(),
-          classname: $(this).find("td:eq(5)").text(),
-          schedule: $(this).find("td:eq(6)").text(),
-          roomname: $(this).find("td:eq(7)").text(),
+          tuition_hours: $(this).find("td:eq(5)").text(),
+          classname: $(this).find("td:eq(6)").text(),
+          day: $(this).find("td:eq(7)").text(),
+          fstart_time: $(this).find("td:eq(8)").text(),
+          fend_time: $(this).find("td:eq(9)").text(),
+          roomname: $(this).find("td:eq(10)").text(),
       };
       courseLoadData.push(rowData);
   });
 
-  // 4. Make an AJAX request to submit the course load data
-  $.ajax({
-      url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/post",  // Replace with your actual backend URL
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({ facultyloadings: courseLoadData }),
-      headers: {
-          'Authorization': `Bearer ${getToken()}`
-      },
-      success: function (response) {
-          // Handle the success response
-          console.log("Course load submitted successfully:", response);
-          // You may want to redirect or show a success message
-          window.alert("Schedules assigned successfully!");
-      },
-      error: function (xhr, status, error) {
-          // Handle the error response
-          console.error("Error submitting course load:", xhr.responseText);
-          // You may want to display an error message
-          window.alert("Error occurred, please assign a schedule or try again");
+  console.log("Final Course Load Data:", courseLoadData);
+
+// 4. Make an AJAX request to submit the course load data
+$.ajax({
+  url: baseUrl + "/facultyloadings/post",
+  type: "POST",
+  contentType: "application/json",
+  data: JSON.stringify({ facultyloadings: courseLoadData }),
+  headers: {
+    'Authorization': `Bearer ${token}`
+  },
+  success: function (response) {
+    // Handle the success response
+    console.log("Course load submitted successfully:", response);
+    showSuccessAlert('Schedules assigned successfully!');
+    // You may want to redirect or show a success message
+  },
+  error: function (xhr, status, error) {
+    // Handle the error response
+    console.error("Error submitting course load:", xhr.responseText);
+
+    // Check for specific error messages and display appropriate SweetAlert messages
+    if (xhr.status === 400) {
+      const errorResponse = JSON.parse(xhr.responseText);
+      if (errorResponse.detail === "Conflicting schedule found.") {
+        showErrorAlert('Conflicting schedule found. Please adjust your schedule.');
+      } else if (errorResponse.detail === "Class already scheduled to other Faculty member!.") {
+        showErrorAlert('Class already scheduled to other Faculty member! Please choose a different class or time.');
+      } else {
+        showErrorAlert('An error occurred. Please try again.');
       }
-  });
+    } else {
+      showErrorAlert('Conflicting schedule found, Please assign a different schedule with different Day and time.');
+    }
+  }
+});
 }
 
 // Assign the submitCourseLoad function to the button click event
 $("#submit-btn").on("click", function () {
-  submitCourseLoad();
+submitCourseLoad();
 });
 
         // Assign the searchFaculty function to the button click event

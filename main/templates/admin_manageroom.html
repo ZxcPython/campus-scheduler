@@ -7,7 +7,7 @@
 <link href="{% static 'css/demo.min.css' %}" rel="stylesheet"/>
 
 <body>
-{% include "navbar.html" %}
+{% include "adminnavbar.html" %}
 
 <div class="page-wrapper">
   <!-- Page header -->
@@ -23,13 +23,12 @@
               <div class="col">
               <div class="mb-1">
                   <ol class="breadcrumb" aria-label="breadcrumbs">
-                  <li class="breadcrumb-item"><a href="/system_configuration/">System Configurations</a></li>
-                  <li class="breadcrumb-item"><a href="/manage_semester/">Manage Semesters</a></li>
-                  <!-- <li class="breadcrumb-item active" aria-current="page"><a href="#">Articles</a></li> -->
+                  <li class="breadcrumb-item"><a href="/adminsystemconfig/">System Configurations</a></li>
+                  <li class="breadcrumb-item"><a href="/admin_manageroom/">Manage Rooms</a></li>
                   </ol>
               </div>
               <h2 class="page-title">
-                  <span class="text-truncate">Semesters</span>
+                  <span class="text-truncate">Rooms</span>
               </h2>
               </div>
           </div>
@@ -42,24 +41,24 @@
                       
                         <a href="#" class="btn btn-primary d-none d-sm-inline-block"  data-bs-toggle="modal" data-bs-target="#modal-report">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                            Add Semester
+                            Add Room
                         </a>
                     </div>
                 </div>
                 <div class="col-12">
                   <div class="card">
                     <div class="table-responsive">
-                      <table
-      class="table table-vcenter table-mobile-md card-table">
+                      <table class="table table-vcenter table-mobile-md card-table">
                         <thead>
                           <tr>
-                            <th>Order</th>
-                            <th>Semester</th>
+                            <th>Room Building</th>
+                            <th>Room Number</th>
+                            <th>Is Lab?</th>
                             <th class="w-1">Action</th>
                           </tr>
                         </thead>
-                        <tbody id="semesterTableBody">
-                      </tbody>
+                        <tbody id="roomTableBody">
+                        </tbody>
                       </table>
                     </div>
                   </div>
@@ -69,57 +68,51 @@
     </div>
     <button id="previousButton" class="btn btn-outline-secondary" style="padding: 10px 20px; border-radius: 5px; text-decoration: none;">Prev</button>
     <button id="nextButton" class="btn btn-outline-secondary" style="padding: 10px 20px; border-radius: 5px; text-decoration: none;">Next</button>
-    </div>
+
+
     <!-- Modal Sample -->
     <div class="modal modal-blur fade" id="modal-report" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Semester</h5>
+              <h5 class="modal-title">Add Room</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="form-selectgroup-boxes row mb-3">
-                
-              
-                <div class="col-lg-6">
-                  
-                </div>
-              </div>
               <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                   <div class="mb-3">
-                    <label class="form-label">Order</label>
-                    <input type="text" class="form-control" name="semesterOrder" placeholder="Order Count">
+                    <label class="form-label">Room Building</label>
+                    <input type="text" class="form-control" name="roomBuilding" placeholder="Enter the room building">
                   </div>
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-6">
                   <div class="mb-3">
-                    <label class="form-label">Semester</label>
-                    <input type="text" class="form-control" name="semesterName" placeholder="Enter the semester">
-                    </div>
+                    <label class="form-label">Room Number</label>
+                    <input type="text" class="form-control" name="roomNumber" placeholder="Enter the room number">
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" name="isLab" id="isLab">
+                    <label class="form-check-label" for="isLab">Is Laboratory?</label>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="modal-body">
-              
             </div>
             <div class="modal-footer">
               <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                 Cancel
               </a>
               <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
-                <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                Add Semester
+                Add Room
               </a>
             </div>
           </div>
         </div>
       </div>
 </div>
-  </div>
-  </div>
 
 <!-- Tabler Core -->
 <script src="./dist/js/tabler.min.js?1692870487" defer></script>
@@ -131,54 +124,34 @@
 <!-- Additional Scripts-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'js/common.js' %}" defer></script>
-<script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            window.location.href = "/index";
-        }
+  document.addEventListener("DOMContentLoaded", function() {
+      if (!localStorage.getItem('accessToken')) {
+          window.location.href = "/index";
+      }
+  });
 
-        let decodedToken;
-        try {
-            decodedToken = jwtJsDecode.decode(accessToken);
-        } catch (error) {
-            window.location.href = "/index";
-        }
+  function getToken() {
+      return localStorage.getItem('accessToken');
+  }
 
-        let usertype = decodedToken.payload.usertype;
-        if (usertype !== 'superadmin') {
-            logout(); // Assuming you have a logout function to handle this
-        }
-    });
+  $(document).ready(function() {
+      const token = getToken();
 
-    function getToken() {
-        return localStorage.getItem('accessToken');
-    }
-
-    function logout() {
-        // Clear local storage and redirect to login page
-        localStorage.removeItem('accessToken');
-        window.location.href = "/index";
-    }
-
-    $(document).ready(function () {
-        const token = getToken();
-
-      function displaySemesterTable(data) {
-          $('#semesterTableBody').empty();
+      function displayRoomTable(data) {
+          $('#roomTableBody').empty();
           if (data && data.length > 0) {
-            data.sort((a, b) => a.order - b.order);
-              data.forEach(function(semester) {
-                  $('#semesterTableBody').append(
+            data.sort((a, b) => a.room_number.localeCompare(b.room_number));
+              data.forEach(function(room) {
+                  $('#roomTableBody').append(
                       `<tr>
-                          <td data-label="Order">${semester.order}</td>
-                          <td data-label="Semester Name">${semester.name}</td>
-                          <!-- Add more fields as needed -->
+                          <td data-label="Room Building">${room.room_building}</td>
+                          <td data-label="Room Number">${room.room_number}</td>
+                          <td data-label="Is Lab">${room.is_lab ? 'Yes' : 'No'}</td>
                           <td>
                               <div class="btn-list flex-nowrap">
-                                  <a href="#" class="btn btn-custom-yellow btn-edit" data-semester-id="${semester.id}" data-semester-order="${semester.order}" data-semester-name="${semester.name}">Edit</a>
-                                  <a href="#" class="btn btn-danger btn-delete" data-semester-id="${semester.id}">Delete</a>
+                                  <a href="#" class="btn btn-custom-yellow btn-edit" data-room-id="${room.id}" data-room-building="${room.room_building}" data-room-number="${room.room_number}" data-is-lab="${room.is_lab}">Edit</a>
+                                  <a href="#" class="btn btn-danger btn-delete" data-room-id="${room.id}">Delete</a>
                               </div>
                           </td>
                       </tr>`
@@ -191,9 +164,9 @@
 
       let currentPage = 1;
 
-      function refreshSemesterTable() {
+      function refreshRoomTable() {
           $.ajax({
-              url: baseUrl+`/semesters/get?page=${currentPage}`, // Adjust the endpoint
+              url: baseUrl+`/rooms/get?page=${currentPage}`,
               type: 'GET',
               headers: {
                   'Authorization': `Bearer ${token}`
@@ -201,10 +174,10 @@
               success: function(data) {
                   if (data.data.length === 0) {
                       console.log('No more data to display.');
-                      currentPage--; // Decrement the current page to revert the last increment
-                      return; // Exit the function
+                      currentPage--;
+                      return;
                   }
-                  displaySemesterTable(data.data);
+                  displayRoomTable(data.data);
                   $('#nextButton').prop('disabled', data.data.length === 0);
                   $('#previousButton').prop('disabled', currentPage === 1);
               },
@@ -217,53 +190,59 @@
       $('#nextButton').on('click', function(e) {
           e.preventDefault();
           currentPage++;
-          refreshSemesterTable();
+          refreshRoomTable();
       });
 
       $('#previousButton').on('click', function(e) {
           e.preventDefault();
           currentPage--;
-          refreshSemesterTable();
+          refreshRoomTable();
       });
 
-      refreshSemesterTable();
+      refreshRoomTable();
+
       $('#modal-report').on('hidden.bs.modal', function() {
-        $('#modal-report .modal-title').text('Add Semester');
-        $('#modal-report .btn-primary').text('Add Semester').removeAttr('data-semester-id');
-        $('#modal-report input[name="semesterOrder"]').val('');
-        $('#modal-report input[name="semesterName"]').val('');
+        $('#modal-report .modal-title').text('Add Room');
+        $('#modal-report .btn-primary').text('Add Room').removeAttr('data-room-id');
+        $('#modal-report input[name="roomBuilding"]').val('');
+        $('#modal-report input[name="roomNumber"]').val('');
+        $('#modal-report input[name="isLab"]').prop('checked', false);
     });
     
-    $('#semesterTableBody').on('click', '.btn-edit', function(e) {
+    $('#roomTableBody').on('click', '.btn-edit', function(e) {
         e.preventDefault();
-        const semesterId = $(this).data('semester-id');
-        const semesterOrder = $(this).data('semester-order');
-        const semesterName = $(this).data('semester-name');
+        const roomId = $(this).data('room-id');
+        const roomBuilding = $(this).data('room-building');
+        const roomNumber = $(this).data('room-number');
+        const isLab = $(this).data('is-lab');
     
-        $('#modal-report input[name="semesterOrder"]').val(semesterOrder);
-        $('#modal-report input[name="semesterName"]').val(semesterName);
-        $('#modal-report .modal-title').text('Update Semester');
-        $('#modal-report .btn-primary').text('Update Semester').attr('data-semester-id', semesterId);
+        $('#modal-report input[name="roomBuilding"]').val(roomBuilding);
+        $('#modal-report input[name="roomNumber"]').val(roomNumber);
+        $('#modal-report input[name="isLab"]').prop('checked', isLab);
+        $('#modal-report .modal-title').text('Update Room');
+        $('#modal-report .btn-primary').text('Update Room').attr('data-room-id', roomId);
         $('#modal-report').modal('show');
     });
     
     $('#modal-report .btn-primary').on('click', function(e) {
         e.preventDefault();
-        const semesterId = $('#modal-report .btn-primary').attr('data-semester-id');
-        const semesterOrder = $('#modal-report input[name="semesterOrder"]').val();
-        const semesterName = $('#modal-report input[name="semesterName"]').val();
+        const roomId = $('#modal-report .btn-primary').attr('data-room-id');
+        const roomBuilding = $('#modal-report input[name="roomBuilding"]').val();
+        const roomNumber = $('#modal-report input[name="roomNumber"]').val();
+        const isLab = $('#modal-report input[name="isLab"]').prop('checked');
     
-        const semesterData = {
-            order: semesterOrder,
-            name: semesterName
+        const roomData = {
+            room_building: roomBuilding,
+            room_number: roomNumber,
+            is_lab: isLab
         };
     
         let apiUrl, requestType;
-        if (semesterId) {
-            apiUrl = baseUrl+`/semesters/${semesterId}`;
+        if (roomId) {
+            apiUrl = baseUrl+`/rooms/${roomId}`;
             requestType = 'PUT';
         } else {
-            apiUrl = baseUrl+'/semesters/post';
+            apiUrl = baseUrl+'/rooms/post';
             requestType = 'POST';
         }
     
@@ -274,45 +253,47 @@
                 'Authorization': `Bearer ${token}`
             },
             contentType: 'application/json',
-            data: JSON.stringify(semesterData),
+            data: JSON.stringify(roomData),
             success: function(response) {
-                console.log('Semester operation successful:', response);
-                refreshSemesterTable();
+                console.log('Room operation successful:', response);
+                refreshRoomTable();
                 $('#modal-report').modal('hide');
-                $('#modal-report input[name="semesterOrder"]').val('');
-                $('#modal-report input[name="semesterName"]').val('');
-                $('#modal-report .modal-title').text('Add Semester');
-                $('#modal-report .btn-primary').text('Add Semester').removeAttr('data-semester-id');
+                $('#modal-report input[name="roomBuilding"]').val('');
+                $('#modal-report input[name="roomNumber"]').val('');
+                $('#modal-report input[name="isLab"]').prop('checked', false);
+                $('#modal-report .modal-title').text('Add Room');
+                $('#modal-report .btn-primary').text('Add Room').removeAttr('data-room-id');
             },
             error: function(xhr, status, error) {
-                console.log('Error with semester operation:', xhr.responseText);
+                console.log('Error with room operation:', xhr.responseText);
             }
         });
     });
     
-    $('#semesterTableBody').on('click', '.btn-delete', function(e) {
+    $('#roomTableBody').on('click', '.btn-delete', function(e) {
         e.preventDefault();
-        const semesterId = $(this).data('semester-id');
-        const isConfirmed = confirm('Are you sure you want to delete this semester?');
+        const roomId = $(this).data('room-id');
+        const isConfirmed = confirm('Are you sure you want to delete this room?');
         if (isConfirmed) {
             $.ajax({
-                url: baseUrl+`/semesters/${semesterId}`,
+                url: baseUrl+`/rooms/${roomId}`,
                 type: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
                 success: function(response) {
-                    console.log('Semester deleted successfully:', response);
-                    refreshSemesterTable();
+                    console.log('Room deleted successfully:', response);
+                    refreshRoomTable();
                 },
                 error: function(xhr, status, error) {
-                    console.log('Error deleting semester:', xhr.responseText);
+                    console.log('Error deleting room:', xhr.responseText);
                 }
             });
         }
     });
   });
 </script>
+
 
 </body>
 </html>
