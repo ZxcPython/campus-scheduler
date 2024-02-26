@@ -213,7 +213,7 @@
   $(document).ready(function () {
       // Populate Academic Year Dropdown
 $.ajax({
-  url: "http://127.0.0.1:8000/academicyears/getacadyr",
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/academicyears/getacadyr",
   type: 'GET',
   headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -234,7 +234,7 @@ $.ajax({
 
 // Populate Semester Dropdown
 $.ajax({
-  url: "http://127.0.0.1:8000/semesters/getsemester",
+  url: "https://schedulerserver-6e565d991c10.herokuapp.com/semesters/getsemester",
   type: 'GET',
   headers: {
       'Authorization': `Bearer ${getToken()}`
@@ -479,7 +479,7 @@ $('#searchButton').on('click', function () {
     
         // Make a request to get filtered faculty loading data
         $.ajax({
-            url: "http://127.0.0.1:8000/facultyloadings/filterfindfaculty",
+            url: "https://schedulerserver-6e565d991c10.herokuapp.com/facultyloadings/filterfindfaculty",
             type: 'GET',
             data: {
                 acadyear_id: academicYearId,
