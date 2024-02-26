@@ -404,7 +404,7 @@ function searchFaculty() {
 // Function to populate Program Dropdown
 function populateProgramDropdown() {
     $.ajax({
-        url: "hhttps://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/courses/getcourse",
         type: 'GET',
         headers: {
             'Authorization': `Bearer ${getToken()}`
