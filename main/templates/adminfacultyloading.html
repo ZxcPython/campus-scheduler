@@ -237,20 +237,41 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
   <script src="{% static 'js/common.js' %}" defer></script>
   <script src="{% static 'js/fisconfig.js' %}" defer></script>
+  <script src="https://unpkg.com/jwt-js-decode@1.8.2/dist/jwt-js-decode.pkg.min.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (!localStorage.getItem('accessToken')) {
-            // Redirect to login if token is not present
-            window.location.href = "/index";
-        }
-    });
-
-    function getToken() {
-        return localStorage.getItem('accessToken');
-    }
-
-    $(document).ready(function () {
-        const token = getToken();
+      document.addEventListener("DOMContentLoaded", function () {
+          const accessToken = localStorage.getItem('accessToken');
+          if (!accessToken) {
+              window.location.href = "/index"; // Redirect to login if token is not present
+              return;
+          }
+  
+          let decodedToken;
+          try {
+              decodedToken = jwtJsDecode.decode(accessToken);
+          } catch (error) {
+              window.location.href = "/index"; // Redirect to login if token is invalid
+              return;
+          }
+  
+          let usertype = decodedToken.payload.usertype;
+          if (usertype !== 'admin') {
+              logout(); // Logout if user is not superadmin
+              return;
+          }
+  
+          function logout() {
+              localStorage.removeItem('accessToken');
+              window.location.href = "/index";
+          }
+      });
+  
+      function getToken() {
+          return localStorage.getItem('accessToken');
+      }
+  
+      $(document).ready(function () {
+          const token = getToken();
 
          // Set up the request headers
          var headers = {
@@ -277,11 +298,20 @@
                         });
 
                         // Initialize Select2 on the dropdown
-                        facultyDropdown.select2({
-                            width: '100%', // Adjust the width as needed
-                            placeholder: 'Search for a faculty',
-                            allowClear: true // Allow clearing the selection
-                        });
+facultyDropdown.select2({
+  width: '200px',
+  height: '300px', // Adjust the width as needed
+  placeholder: 'Search for a faculty',
+  allowClear: true, // Allow clearing the selection
+  templateSelection: function(data) {
+      // Change the font size for the selected option
+      return $('<span style="font-size: 16px;">' + data.text + '</span>');
+  },
+  templateResult: function(data) {
+      // Change the font size for the options in the dropdown
+      return $('<span style="font-size: 16px;">' + data.text + '</span>');
+  }
+})
                     } else {
                         console.log('No data to display.');
                     }
