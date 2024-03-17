@@ -1194,7 +1194,192 @@ function populateCurriculumTable(data) {
           console.log('Error fetching room data:', xhr.responseText);
         }
       });
-    } 
+    }
+    else if (curriculum.units == 6) {
+      // Duplicate the row with the same lab_hours and units values
+      const unitsHoursRow = $.extend(true, {}, curriculum);
+      unitsHoursRow.units = curriculum.units;
+
+      // Make a request to get room data for each curriculum row
+      $.ajax({
+        url: "https://schedulerserver-6e565d991c10.herokuapp.com/rooms/getrooms",
+        type: 'GET',
+        data: {
+          // Include any additional filtering criteria for rooms
+          // For example: room_id: curriculum.room_id
+        },
+        headers: {
+          'Authorization': `Bearer ${getToken()}`
+        },
+        success: function (roomResponse) {
+         // Add a new row for additional schedules
+           tableBody.append(`
+           <tr>
+             <td>${unitsHoursRow.subject_code}</td>
+             <td>${unitsHoursRow.subject_name}</td>
+             <td>${unitsHoursRow.lecture_hours}</td>
+             <td>${unitsHoursRow.lab_hours}</td>
+             <td>${unitsHoursRow.units}</td>
+             <td>${unitsHoursRow.tuition_hours}</td>
+             <td>                
+              <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: blue;">For Lecture hours</span>
+              <select class="form-select" style="font-size: small; width: 150px;">s
+                 <option value="Monday">Monday</option>
+                 <option value="Tuesday">Tuesday</option>
+                 <option value="Wednesday">Wednesday</option>
+                 <option value="Thursday">Thursday</option>
+                 <option value="Friday">Friday</option>
+                 <option value="Saturday">Saturday</option>
+                 <option value="Sunday">Sunday</option>
+               </select>
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <input type="time" class="form-select" name="schedule" style="font-size: small;">
+             </td>
+             <td>
+               <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                 <option value=""></option>
+                 ${generateRoomOptions(roomResponse.data)}
+               </select>
+             </td>
+             <td>
+               <button class="btn btn-secondary" id="validator-btn">Validate</button>
+             </td>
+           </tr>
+         `);
+
+          // Add a new row for lab hours
+          tableBody.append(`
+            <tr>
+              <td>${unitsHoursRow.subject_code}</td>
+              <td>${unitsHoursRow.subject_name}</td>
+              <td>${unitsHoursRow.lecture_hours}</td>
+              <td>${unitsHoursRow.lab_hours}</td>
+              <td>${unitsHoursRow.units}</td>
+              <td>${unitsHoursRow.tuition_hours}</td>
+              <td>
+                <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: red;">(Optional Schedule)</span>
+                <select class="form-select" style="font-size: small; width: 150px;">
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                  <option value="Sunday">Sunday</option>
+                </select>
+              </td>
+              <td>
+                <input type="time" class="form-select" name="schedule" style="font-size: small;">
+              </td>
+              <td>
+                <input type="time" class="form-select" name="schedule" style="font-size: small;">
+              </td>
+              <td>
+                <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                  <option value=""></option>
+                  ${generateRoomOptions(roomResponse.data)}
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-secondary" id="validator-btn">Validate</button>
+                <button class="btn btn-danger" onclick="deleteRow(this)">Remove</button>
+              </td>
+            </tr>
+          `);
+                    // Add a new row for lab hours
+                    tableBody.append(`
+                    <tr>
+                      <td>${unitsHoursRow.subject_code}</td>
+                      <td>${unitsHoursRow.subject_name}</td>
+                      <td>${unitsHoursRow.lecture_hours}</td>
+                      <td>${unitsHoursRow.lab_hours}</td>
+                      <td>${unitsHoursRow.units}</td>
+                      <td>${unitsHoursRow.tuition_hours}</td>
+                      <td>
+                        <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: red;">(Optional Schedule)</span>
+                        <select class="form-select" style="font-size: small; width: 150px;">
+                          <option value="Monday">Monday</option>
+                          <option value="Tuesday">Tuesday</option>
+                          <option value="Wednesday">Wednesday</option>
+                          <option value="Thursday">Thursday</option>
+                          <option value="Friday">Friday</option>
+                          <option value="Saturday">Saturday</option>
+                          <option value="Sunday">Sunday</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input type="time" class="form-select" name="schedule" style="font-size: small;">
+                      </td>
+                      <td>
+                        <input type="time" class="form-select" name="schedule" style="font-size: small;">
+                      </td>
+                      <td>
+                        <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                          <option value=""></option>
+                          ${generateRoomOptions(roomResponse.data)}
+                        </select>
+                      </td>
+                      <td>
+                        <button class="btn btn-secondary" id="validator-btn">Validate</button>
+                        <button class="btn btn-danger" onclick="deleteRow(this)">Remove</button>
+                      </td>
+                    </tr>
+                  `);
+                    // Add a new row for lab hours
+                    tableBody.append(`
+                    <tr>
+                      <td>${unitsHoursRow.subject_code}</td>
+                      <td>${unitsHoursRow.subject_name}</td>
+                      <td>${unitsHoursRow.lecture_hours}</td>
+                      <td>${unitsHoursRow.lab_hours}</td>
+                      <td>${unitsHoursRow.units}</td>
+                      <td>${unitsHoursRow.tuition_hours}</td>
+                      <td>
+                        <span class="label" style="font-family: 'Times New Roman', Times, serif; font-size: 11px; font-weight: bold; font-style: italic; color: red;">(Optional Schedule)</span>
+                        <select class="form-select" style="font-size: small; width: 150px;">
+                          <option value="Monday">Monday</option>
+                          <option value="Tuesday">Tuesday</option>
+                          <option value="Wednesday">Wednesday</option>
+                          <option value="Thursday">Thursday</option>
+                          <option value="Friday">Friday</option>
+                          <option value="Saturday">Saturday</option>
+                          <option value="Sunday">Sunday</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input type="time" class="form-select" name="schedule" style="font-size: small;">
+                      </td>
+                      <td>
+                        <input type="time" class="form-select" name="schedule" style="font-size: small;">
+                      </td>
+                      <td>
+                        <select type="text" class="form-select select2-room" style="width: 150px;" data-placeholder="Select Room">
+                          <option value=""></option>
+                          ${generateRoomOptions(roomResponse.data)}
+                        </select>
+                      </td>
+                      <td>
+                        <button class="btn btn-secondary" id="validator-btn">Validate</button>
+                        <button class="btn btn-danger" onclick="deleteRow(this)">Remove</button>
+                      </td>
+                    </tr>
+                  `);
+
+          // Initialize Select2 for the room dropdowns
+          $('.select2-room').select2({
+            width: '100%',
+            allowClear: true
+          });
+        },
+        error: function (xhr, status, error) {
+          console.log('Error fetching room data:', xhr.responseText);
+        }
+      });
+    }
     else if (curriculum.units > 0) {
       // Duplicate the row with the same lab_hours and units values
       const unitsHoursRow = $.extend(true, {}, curriculum);

@@ -493,7 +493,7 @@ fetchData()
       console.log('Error:', error);
   });
 
-  // Function to render the pie chart with data fetched from the API
+   // Function to render the pie chart with data fetched from the API
 function renderFacultyTypePieChart(data) {
   // Initialize an object to store counts for each Rank
   var facultyTypeCounts = {};
@@ -519,7 +519,8 @@ function renderFacultyTypePieChart(data) {
   var options = {
     series: Object.values(facultyTypeCounts),
     chart: {
-      width: '370px', // Set width to 100% to make the chart fill its container
+      width: '440px', // Set width to 100% to make the chart fill its container
+      height: '500px', // Set width to 100% to make the chart fill its container
       type: 'pie',
     },
     labels: Object.keys(facultyTypeCounts),
@@ -567,7 +568,6 @@ fetchData()
       },
     });
   }
-  
   // Function to fetch data from the API based on academic year and semester
   function fetchRoomScheduleData(academicYearId, semesterId) {
     return $.ajax({
